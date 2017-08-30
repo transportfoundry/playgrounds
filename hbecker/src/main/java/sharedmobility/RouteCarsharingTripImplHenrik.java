@@ -138,7 +138,7 @@ public class RouteCarsharingTripImplHenrik implements RouteCarsharingTrip {
 			if (!keepTheCarForLaterUse)  {	
 				
 				
-				if (vehicle.getCsType() != "bike") {
+				if (!mainMode.equals("bikeshare")) {
 				// car	
 				trip.add(RouterUtilsHenrik.createCarLeg(pf, pathCalculator,
 						person, vehicleLinkLocation, parkingLocation, carsharingVehicleLegs[index],

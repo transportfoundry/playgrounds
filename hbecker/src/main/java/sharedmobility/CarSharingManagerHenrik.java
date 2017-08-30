@@ -161,7 +161,7 @@ public class CarSharingManagerHenrik implements CarsharingManagerInterface, Iter
 							stationLink, destinationLink, true, false);
 				}
 				else {
-					if ((carsharingType.equals("oneway")) || (carsharingType.equals("freefloating"))) {
+					if ((carsharingType.equals("oneway")) || (carsharingType.equals("freefloating") || (carsharingType.equals("bikeshare")))) {
 						Link parkingStationLink = this.carsharingSupplyContainer.findClosestAvailableParkingSpace(
 								destinationLink, carsharingType, chosenVehicle.getCompanyId(), searchDistance);
 						if (parkingStationLink == null)
