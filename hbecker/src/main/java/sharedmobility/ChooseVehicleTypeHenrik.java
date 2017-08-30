@@ -20,14 +20,17 @@ public class ChooseVehicleTypeHenrik implements ChooseVehicleType {
 	@Override
 	public String getPreferredVehicleType(Plan plan, Leg currentLeg){
 		
+		if (!currentLeg.equals("bikeshare")) {
 		
-		String vehicleType = "car";
-		return vehicleType;
-		 
-		
-		//String vehicleType = currentLeg.getMode();
-		//return vehicleType;
-		
+			String vehicleType = "car";
+			return vehicleType;
+			
+		} else {
+			
+			String vehicleType = "bike";
+			return vehicleType;
+			
+		}
 		
 	}
 	
