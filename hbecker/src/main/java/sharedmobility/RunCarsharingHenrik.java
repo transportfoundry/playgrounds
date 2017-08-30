@@ -75,7 +75,7 @@ public class RunCarsharingHenrik {
 	public static void installCarSharing(final Controler controler) {		
 		
 		final Scenario scenario = controler.getScenario();
-		CarsharingXmlReaderNew reader = new CarsharingXmlReaderNew(scenario.getNetwork());
+		CarsharingXmlReaderHenrik reader = new CarsharingXmlReaderHenrik(scenario.getNetwork());
 		
 		final CarsharingConfigGroup configGroup = (CarsharingConfigGroup)
 				scenario.getConfig().getModule( CarsharingConfigGroup.GROUP_NAME );
