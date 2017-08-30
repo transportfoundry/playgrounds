@@ -32,7 +32,6 @@ import org.matsim.contrib.carsharing.qsim.CarsharingQsimFactoryNew;
 import org.matsim.contrib.carsharing.readers.CarsharingXmlReaderNew;
 import org.matsim.contrib.carsharing.replanning.CarsharingSubtourModeChoiceStrategy;
 import org.matsim.contrib.carsharing.replanning.RandomTripToCarsharingStrategy;
-import org.matsim.contrib.carsharing.runExample.CarsharingUtils;
 import org.matsim.contrib.carsharing.scoring.CarsharingScoringFunctionFactory;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
@@ -47,6 +46,7 @@ import com.google.inject.Singleton;
 import sharedmobility.RouteCarsharingTripImplHenrik;
 import sharedmobility.CarSharingManagerHenrik;
 import sharedmobility.ChooseVehicleTypeHenrik;
+import sharedmobility.CarsharingUtilsHenrik;
 
 
 public class RunCarsharingHenrik {
@@ -60,7 +60,7 @@ public class RunCarsharingHenrik {
 		if(Integer.parseInt(config.getModule("qsim").getValue("numberOfThreads")) > 1)
 			Logger.getLogger( "org.matsim.core.controler" ).warn("Carsharing contrib is not stable for parallel qsim!! If the error occures please use 1 as the number of threads.");
 		
-		CarsharingUtils.addConfigModules(config);
+		CarsharingUtilsHenrik.addConfigModules(config);
 
 		final Scenario sc = ScenarioUtils.loadScenario(config);
 
@@ -90,7 +90,7 @@ public class RunCarsharingHenrik {
 
 		final MembershipContainer memberships = membershipReader.getMembershipContainer();
 		
-		final CostsCalculatorContainer costsCalculatorContainer = CarsharingUtils.createCompanyCostsStructure(carsharingCompanies);
+		final CostsCalculatorContainer costsCalculatorContainer = CarsharingUtilsHenrik.createCompanyCostsStructure(carsharingCompanies);
 		
 		final CarsharingListener carsharingListener = new CarsharingListener();
 		//final CarsharingSupplyInterface carsharingSupplyContainer = new CarsharingSupplyContainer(controler.getScenario());
@@ -165,7 +165,7 @@ public class RunCarsharingHenrik {
 
 		//=== routing moduels for carsharing trips ===
 
-		controler.addOverridingModule(CarsharingUtils.createRoutingModule());			
+		controler.addOverridingModule(CarsharingUtilsHenrik.createRoutingModule());			
 	}
 
 }
