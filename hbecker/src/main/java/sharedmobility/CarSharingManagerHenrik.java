@@ -77,10 +77,13 @@ public class CarSharingManagerHenrik implements CarsharingManagerInterface, Iter
 			keepTheCar = keepTheCarModel.keepTheCarDuringNextActivity(durationOfNextActivity, plan.getPerson(), carsharingType);	
 		//TODO: create a method for getting the search distance
 		double searchDistance = 1000.0;
+		
 		if (vehicle != null) {
 			
 			if ((willHaveATripFromLocation && keepTheCar) || (willHaveATripFromLocation && carsharingType.equals("twoway"))) {
+				
 				((CarsharingRoute)legToBeRouted.getRoute()).setKeepthecar(true);
+				
 				return this.routerProvider.routeCarsharingTrip(plan, time, legToBeRouted, carsharingType, vehicle,
 					startLink, destinationLink, true, true);
 			}
@@ -106,6 +109,7 @@ public class CarSharingManagerHenrik implements CarsharingManagerInterface, Iter
 					destinationLink = parkingStation.getLink();
 				}			
 				
+				//freefloating & bikesharing
 				return this.routerProvider.routeCarsharingTrip(plan, time, legToBeRouted, carsharingType, vehicle,
 						startLink, destinationLink, false, true);				
 			}			
