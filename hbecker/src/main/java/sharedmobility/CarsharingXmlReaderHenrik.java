@@ -198,7 +198,7 @@ public class CarsharingXmlReaderHenrik extends MatsimXmlParser {
 			Coord coordStation = new Coord(Double.parseDouble(xCoord), Double.parseDouble(yCoord));
 				
 			link = (Link)NetworkUtils.getNearestLinkExactly(network, coordStation);
-			FFVehicleImpl ffcsvehicle = new FFVehicleImpl(type, atts.getValue("id"), companyName);
+			FFVehicleImpl ffcsvehicle = new FFVehicleImpl(type, atts.getValue("id"), companyName, "freefloating");
 			ffVehicleLocationQuadTree.put(link.getCoord().getX(), link.getCoord().getY(), ffcsvehicle);
 			ffvehiclesMap.put(ffcsvehicle, link);
 			ffvehicleIdMap.put(atts.getValue("id"), ffcsvehicle);
@@ -206,14 +206,14 @@ public class CarsharingXmlReaderHenrik extends MatsimXmlParser {
 			allVehicleLocations.put(ffcsvehicle, link);
 		}
 		else if (name.equals("bikeshare")) {
-			hasFF= true;
+			hasBS= true;
 			String xCoord = atts.getValue("x");
 			String yCoord = atts.getValue("y");
 			String type = atts.getValue("type");
 			Coord coordStation = new Coord(Double.parseDouble(xCoord), Double.parseDouble(yCoord));
 				
 			link = (Link)NetworkUtils.getNearestLinkExactly(network, coordStation);
-			FFVehicleImpl ffcsvehicle = new FFVehicleImpl(type, atts.getValue("id"), companyName);
+			FFVehicleImpl ffcsvehicle = new FFVehicleImpl(type, atts.getValue("id"), companyName, "bikeshare");
 			bsVehicleLocationQuadTree.put(link.getCoord().getX(), link.getCoord().getY(), ffcsvehicle);
 			bsvehiclesMap.put(ffcsvehicle, link);
 			bsvehicleIdMap.put(atts.getValue("id"), ffcsvehicle);

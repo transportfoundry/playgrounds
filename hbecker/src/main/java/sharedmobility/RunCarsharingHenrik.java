@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.contrib.carsharing.config.CarsharingConfigGroup;
 import org.matsim.contrib.carsharing.control.listeners.CarsharingListener;
-import org.matsim.contrib.carsharing.events.handlers.PersonArrivalDepartureHandler;
 import org.matsim.contrib.carsharing.manager.CarsharingManagerInterface;
 import org.matsim.contrib.carsharing.manager.demand.CurrentTotalDemand;
 import org.matsim.contrib.carsharing.manager.demand.CurrentTotalDemandImpl;
@@ -29,7 +28,6 @@ import org.matsim.contrib.carsharing.models.ChooseVehicleType;
 import org.matsim.contrib.carsharing.models.KeepingTheCarModel;
 import org.matsim.contrib.carsharing.models.KeepingTheCarModelExample;
 import org.matsim.contrib.carsharing.qsim.CarsharingQsimFactoryNew;
-import org.matsim.contrib.carsharing.readers.CarsharingXmlReaderNew;
 import org.matsim.contrib.carsharing.replanning.CarsharingSubtourModeChoiceStrategy;
 import org.matsim.contrib.carsharing.replanning.RandomTripToCarsharingStrategy;
 import org.matsim.contrib.carsharing.scoring.CarsharingScoringFunctionFactory;
@@ -47,6 +45,12 @@ import sharedmobility.RouteCarsharingTripImplHenrik;
 import sharedmobility.CarSharingManagerHenrik;
 import sharedmobility.ChooseVehicleTypeHenrik;
 import sharedmobility.CarsharingUtilsHenrik;
+//import sharedmobility.PersonArrivalDepartureHandlerHenrik;
+
+import org.matsim.contrib.carsharing.events.handlers.PersonArrivalDepartureHandler;
+
+
+
 
 
 public class RunCarsharingHenrik {
@@ -137,7 +141,7 @@ public class RunCarsharingHenrik {
 			@Override
 			public void install() {
 				this.addPlanStrategyBinding("RandomTripToCarsharingStrategy").to( RandomTripToCarsharingStrategy.class ) ;
-				this.addPlanStrategyBinding("CarsharingSubtourModeChoiceStrategy").to( CarsharingSubtourModeChoiceStrategy.class ) ;
+				//this.addPlanStrategyBinding("CarsharingSubtourModeChoiceStrategy").to( CarsharingSubtourModeChoiceStrategy.class ) ;
 			}
 		});
 		

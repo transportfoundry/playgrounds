@@ -44,9 +44,10 @@ public class RouteCarsharingTripImplHenrik implements RouteCarsharingTrip {
 			"freefloating", "bikeshare"));
 	
 	private final String[] carsharingVehicleLegs = {"oneway_vehicle", "twoway_vehicle",
-			"freefloating_vehicle", "bikeshare_bike"};
+			"freefloating_vehicle", "bikeshare_vehicle"};
+	
 	private final String[] accessCSLegs = {"access_walk_ow", "access_walk_tw",
-	"access_walk_ff", "access_walk:bs"};
+	"access_walk_ff", "access_walk_bs"};
 	
 	private final String[] egressCSLegs = {"egress_walk_ow", "egress_walk_tw",
 	"egress_walk_ff", "egress_walk_bs"};
