@@ -17,18 +17,18 @@ public class CostCalculationHenrik implements CostCalculation {
 		double inVehicleTime = rentalInfo.getInVehicleTime();
 		
 		
-	//	if (rentalInfo.getCarsharingType() != "bikeshare") {
+		if (rentalInfo.getCarsharingType().equals("bikeshare")) {
 			
 			return CostCalculationHenrik.scaleTOMatchCar * 
 					(inVehicleTime /60.0 * 0.3 + (rentalTIme - inVehicleTime) / 60.0 * 0.15);
-		/*
+		
 		} else {
 			
 			return CostCalculationHenrik.scaleTOMatchCar * 
 					(inVehicleTime /60.0 * 0.15);
 			
 		}
-		*/
+		
 		
 		
 	}

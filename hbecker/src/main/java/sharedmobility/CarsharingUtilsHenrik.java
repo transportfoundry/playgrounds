@@ -13,7 +13,6 @@ import org.matsim.contrib.carsharing.config.OneWayCarsharingConfigGroup;
 import org.matsim.contrib.carsharing.config.TwoWayCarsharingConfigGroup;
 import org.matsim.contrib.carsharing.manager.supply.costs.CompanyCosts;
 import org.matsim.contrib.carsharing.manager.supply.costs.CostCalculation;
-import org.matsim.contrib.carsharing.manager.supply.costs.CostCalculationExample;
 import org.matsim.contrib.carsharing.manager.supply.costs.CostsCalculatorContainer;
 import org.matsim.contrib.carsharing.router.FreeFloatingRoutingModule;
 import org.matsim.contrib.carsharing.router.OneWayCarsharingRoutingModule;
@@ -22,6 +21,9 @@ import org.matsim.core.config.Config;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.router.MainModeIdentifier;
 import org.matsim.core.router.MainModeIdentifierImpl;
+
+import sharedmobility.CostCalculationHenrik;
+
 
 public class CarsharingUtilsHenrik {
 
@@ -55,10 +57,10 @@ public static Config addConfigModules(Config config) {
 			
 			//=== here customizable cost structures come in ===
 			//===what follows is just an example!! and should be modified according to the study at hand===
-			costCalculations.put("bikeshare", new CostCalculationExample());
-			costCalculations.put("freefloating", new CostCalculationExample());
-			costCalculations.put("twoway", new CostCalculationExample());
-			costCalculations.put("oneway", new CostCalculationExample());
+			costCalculations.put("bikeshare", new CostCalculationHenrik());
+			costCalculations.put("freefloating", new CostCalculationHenrik());
+			costCalculations.put("twoway", new CostCalculationHenrik());
+			costCalculations.put("oneway", new CostCalculationHenrik());
 			CompanyCosts companyCosts = new CompanyCosts(costCalculations);
 			
 			companyCostsContainer.getCompanyCostsMap().put(s, companyCosts);

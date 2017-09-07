@@ -28,14 +28,11 @@ import org.matsim.contrib.carsharing.models.ChooseVehicleType;
 import org.matsim.contrib.carsharing.models.KeepingTheCarModel;
 import org.matsim.contrib.carsharing.models.KeepingTheCarModelExample;
 import org.matsim.contrib.carsharing.qsim.CarsharingQsimFactoryNew;
-import org.matsim.contrib.carsharing.replanning.CarsharingSubtourModeChoiceStrategy;
 import org.matsim.contrib.carsharing.replanning.RandomTripToCarsharingStrategy;
-import org.matsim.contrib.carsharing.scoring.CarsharingScoringFunctionFactory;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
-import org.matsim.core.controler.OutputDirectoryHierarchy;
 import org.matsim.core.scenario.ScenarioUtils;
 
 import com.google.inject.Provides;
@@ -45,6 +42,7 @@ import sharedmobility.RouteCarsharingTripImplHenrik;
 import sharedmobility.CarSharingManagerHenrik;
 import sharedmobility.ChooseVehicleTypeHenrik;
 import sharedmobility.CarsharingUtilsHenrik;
+import sharedmobility.CSBSScoringFunctionFactory;
 //import sharedmobility.PersonArrivalDepartureHandlerHenrik;
 
 import org.matsim.contrib.carsharing.events.handlers.PersonArrivalDepartureHandler;
@@ -125,7 +123,8 @@ public class RunCarsharingHenrik {
 			    bind(CarsharingManagerInterface.class).to(CarSharingManagerHenrik.class);
 			    bind(VehicleChoiceAgent.class).toInstance(vehicleChoiceAgent);
 			    bind(DemandHandler.class).asEagerSingleton();
-			}			
+			    bind(BikeshareDemandHandler.class).asEagerSingleton();
+}			
 			@Provides @Singleton
 			CarsharingSupplyContainer provideCarsharingSupplyContainer(Scenario scenario) {
 			    return new CarsharingSupplyContainer(scenario);
@@ -155,7 +154,10 @@ public class RunCarsharingHenrik {
 				//bindScoringFunctionFactory().to(CarsharingScoringFunctionFactory.class);		      
 		        addEventHandlerBinding().to(PersonArrivalDepartureHandler.class);
 		        addEventHandlerBinding().to(DemandHandler.class);
+		        addEventHandlerBinding().to(BikeshareDemandHandler.class);
 			}
+
+
 		});
 		//=== adding carsharing specific scoring factory ===
 		controler.addOverridingModule(new AbstractModule() {
@@ -163,7 +165,7 @@ public class RunCarsharingHenrik {
 			@Override
 			public void install() {
 				        
-				bindScoringFunctionFactory().to(CarsharingScoringFunctionFactory.class);	
+				bindScoringFunctionFactory().to(CSBSScoringFunctionFactory.class);	
 			}
 		});
 

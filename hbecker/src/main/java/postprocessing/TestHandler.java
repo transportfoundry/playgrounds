@@ -27,7 +27,6 @@ import org.matsim.contrib.carsharing.events.StartRentalEvent;
 import org.matsim.contrib.carsharing.events.handlers.EndRentalEventHandler;
 import org.matsim.contrib.carsharing.events.handlers.StartRentalEventHandler;
 import org.matsim.contrib.carsharing.manager.demand.AgentRentals;
-import org.matsim.contrib.carsharing.manager.demand.RentalInfo;
 import org.matsim.contrib.carsharing.manager.demand.VehicleRentals;
 import org.matsim.contrib.carsharing.vehicles.CSVehicle;
 import org.matsim.core.api.experimental.events.EventsManager;
@@ -36,9 +35,13 @@ import org.matsim.core.events.EventsUtils;
 import org.matsim.core.utils.io.IOUtils;
 import org.matsim.vehicles.Vehicle;
 
+import sharedmobility.RentalInfo;
+
+
+
 
 public class TestHandler  implements ActivityEndEventHandler, ActivityStartEventHandler, PersonEntersVehicleEventHandler,
-PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEventHandler {
+PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEventHandler, StartRentalEventHandler {
 	
 	Set<String> vehicles = new TreeSet<String>();
 	
@@ -52,18 +55,6 @@ PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEvent
 
 	Map<String,RentalInfo> rInfos = new HashMap<String, RentalInfo>();
 	Map<String,Integer> nRentals = new HashMap<String, Integer>();
-	
-	
-/*
-		RentalInfo info = new RentalInfo();
-		info.setCarsharingType(event.getCarsharingType());
-		info.setAccessStartTime(event.getTime());
-		info.setStartTime(event.getTime());
-		info.setOriginLinkId(event.getOriginLinkId());
-		info.setPickupLinkId(event.getPickuplinkId());
-*/
-
-	
 	
 	
 	public String definePersid(PersonDepartureEvent event)  {
@@ -86,6 +77,27 @@ PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEvent
 	
 	
 	public String definePersid(PersonArrivalEvent event)  {
+		
+		String persid = new String();
+		
+		if(!nRentals.containsKey(event.getPersonId())) {
+			nRentals.put(event.getPersonId().toString(),1);
+			persid = event.getPersonId().toString();
+			
+		} else
+		
+		if(nRentals.get(event.getPersonId()).equals(1)){ 	
+			persid = event.getPersonId().toString();
+			
+		} else { 
+			persid = event.getPersonId().toString() + "-" + nRentals.get(event.getPersonId().toString()); 
+		}
+		
+		return persid;
+	}
+	
+	
+	public String definePersid(StartRentalEvent event)  {
 		
 		String persid = new String();
 		
@@ -180,6 +192,18 @@ PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEvent
 		}
 	}
 	
+	@Override
+	public void handleEvent(StartRentalEvent event){
+		
+		String persid = definePersid(event);
+		RentalInfo info = rInfos.get(persid);
+
+		info.setVehId(event.getvehicleId());
+		rInfos.put(persid, info);
+
+		
+	}
+	
 	
 	public Map<String,RentalInfo> getRentalInfos() {
 		
@@ -255,7 +279,7 @@ PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEvent
 		
 		
 		
-		final BufferedWriter outLink = IOUtils.getBufferedWriter("C:/Users/beckerh/SiouxFalls/outputbs1/BS.txt");
+		final BufferedWriter outLink = IOUtils.getBufferedWriter("C:/Users/beckerh/SiouxFalls/output_1/BS.txt");
 		try {
 			outLink.write("personID,carsharingType,startTime,endTIme,startLink,pickupLink,dropoffLink,endLink,distance,inVehicleTime,accessTime,egressTime,vehicleID,"
 					+ "companyID,vehicleType");
@@ -265,15 +289,6 @@ PersonLeavesVehicleEventHandler, PersonDepartureEventHandler, PersonArrivalEvent
 		
 			outLink.write(personId + "," + occ.getRentalInfos().get(personId));
 			outLink.newLine();
-			
-			/*
-			for (RentalInfo i : agentRentalsMap.get(personId).getArr()) {
-				CSVehicle vehicle = this.carsharingSupply.getAllVehicles().get(i.getVehId().toString());		
-				numberOfRentals++;
-				outLink.write(personId + "," + i.toString() + "," + vehicle.getCompanyId() + "," + vehicle.getType());
-				outLink.newLine();
-			}
-			*/
 			
 		}
 		
