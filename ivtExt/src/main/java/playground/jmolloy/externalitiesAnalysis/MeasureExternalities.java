@@ -23,6 +23,7 @@ import org.matsim.core.events.EventsUtils;
 import org.matsim.core.events.MatsimEventsReader;
 import org.matsim.core.events.algorithms.EventWriterXML;
 import org.matsim.core.scenario.ScenarioUtils;
+import org.matsim.households.Household;
 import org.matsim.vehicles.Vehicle;
 import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleUtils;
@@ -43,7 +44,7 @@ public class MeasureExternalities {
 
     final private static String CONFIG_FILE = "defaultIVTConfig_w_emissions.xml"; // "defaultIVTConfig_w_emissions.xml";
     final private static String EVENTS_FILE = "800.events.xml.gz";
-    final private static String RUN_FOLDER = "C:\\Users\\molloyj\\Documents\\ARE_SP_2016\\zurich_1pc\\";
+    final private static String RUN_FOLDER = "C:\\Users\\molloyj\\Documents\\SCCER\\zurich_1pc\\scenario\\";
 
 
     private Config config;
@@ -60,6 +61,7 @@ public class MeasureExternalities {
         int bin_size_s = 3600;
 
         config = ConfigUtils.loadConfig(RUN_FOLDER + CONFIG_FILE, new EmissionsConfigGroup(), new NoiseConfigGroup());
+        config.controler().setOutputDirectory(RUN_FOLDER + "output\\");
         Scenario scenario = ScenarioUtils.loadScenario(config);
         ((NoiseConfigGroup) config.getModules().get(NoiseConfigGroup.GROUP_NAME)).setTimeBinSizeNoiseComputation(bin_size_s);
 
@@ -69,15 +71,19 @@ public class MeasureExternalities {
         CongestionHandler congestionHandler = new CongestionHandlerImplV3(eventsManager, scenario);
         CongestionAggregator congestionAggregator = new CongestionAggregator(scenario, bin_size_s);
 
+    //    setUpVehicles(scenario);
+        EmissionModule emissionModule = new EmissionModule(scenario, eventsManager);
+
         eventsManager.addHandler(congestionHandler);
         eventsManager.addHandler(congestionAggregator);
 
         //emissions
-        setUpVehicles(scenario);
         //add emissions module
-        EmissionModule emissionModule = new EmissionModule(scenario, eventsManager);
-        setUpNoise(scenario);
+
+   //     setUpNoise(scenario);
+
         //add listener to tally emission events by (warm|cold)/link/userGroup/time
+
 
         reader.readFile(RUN_FOLDER + EVENTS_FILE);
 
@@ -111,25 +117,25 @@ public class MeasureExternalities {
         }
     }
 
-
+/*
     private void setUpVehicles(Scenario scenario) {
+        //householdid, #autos, auto1, auto2, auto3
+        //get household id of person. Assign next vehicle from household.
 
         VehicleType car = VehicleUtils.getFactory().createVehicleType(Id.create(TransportMode.car, VehicleType.class));
         car.setMaximumVelocity(60.0 / 3.6);
         car.setPcuEquivalents(1.0);
-        car.setDescription("BEGIN_EMISSIONSPASSENGER_CAR;petrol (4S);>=2L;PC-P-Euro-1END_EMISSIONS");
+        car.setDescription("BEGIN_EMISSIONSPASSENGER_CAR;petrol (4S);>=2L;PC-P-Euro-3END_EMISSIONS");
         scenario.getVehicles().addVehicleType(car);
 
-        for (Id<Person> pid : scenario.getPopulation().getPersons().keySet()) {
-            Id<Vehicle> vid = Id.createVehicleId(pid);
+        for (Id<Household> hid : scenario.getHouseholds().getHouseholds().keySet()) {
+            Id<Vehicle> vid = Id.createVehicleId();
+            //easy option: add
             Vehicle v = scenario.getVehicles().getFactory().createVehicle(vid, car);
             scenario.getVehicles().addVehicle(v);
+            scenario.getHouseholds().getHouseholds().get(hid).getVehicleIds().add(vid);
         }
 
-        for (Link l : scenario.getNetwork().getLinks().values()) {
-            l.getAttributes().putAttribute("type", "43");
-
-        }
-    }
+    }*/
 
 }
