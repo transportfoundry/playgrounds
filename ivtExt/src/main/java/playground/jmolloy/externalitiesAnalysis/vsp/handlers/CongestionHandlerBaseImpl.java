@@ -20,7 +20,7 @@
 /**
  * 
  */
-package playground.jmolloy.externalitiesAnalysis.handlers;
+package playground.jmolloy.externalitiesAnalysis.vsp.handlers;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Id;
@@ -32,10 +32,11 @@ import org.matsim.api.core.v01.population.Person;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.events.algorithms.Vehicle2DriverEventHandler;
 import org.matsim.vehicles.Vehicle;
-import playground.vsp.congestion.AgentOnLinkInfo;
-import playground.vsp.congestion.DelayInfo;
-import playground.vsp.congestion.events.CongestionEvent;
-import playground.vsp.congestion.handlers.LinkCongestionInfo;
+import playground.jmolloy.externalitiesAnalysis.vsp.AgentOnLinkInfo;
+import playground.jmolloy.externalitiesAnalysis.vsp.DelayInfo;
+import playground.jmolloy.externalitiesAnalysis.vsp.CongestionEvent;
+import playground.jmolloy.externalitiesAnalysis.vsp.LinkCongestionInfo;
+import playground.jmolloy.externalitiesAnalysis.vsp.CongestionUtils;
 
 import java.util.*;
 

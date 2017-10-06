@@ -16,13 +16,12 @@
  *   See also COPYING, LICENSE and WARRANTY file                           *
  *                                                                         *
  * *********************************************************************** */
-package playground.jmolloy.externalitiesAnalysis.handlers;
+package playground.jmolloy.externalitiesAnalysis.vsp;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
-import playground.vsp.congestion.handlers.LinkCongestionInfo;
 
 import java.util.Map;
 

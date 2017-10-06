@@ -1,35 +1,22 @@
 package playground.jmolloy.externalitiesAnalysis;
 
 import org.apache.log4j.Logger;
-import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
-import org.matsim.api.core.v01.TransportMode;
-import org.matsim.api.core.v01.network.Link;
-import org.matsim.api.core.v01.population.Person;
 import org.matsim.contrib.emissions.EmissionModule;
 import org.matsim.contrib.emissions.utils.EmissionsConfigGroup;
 import org.matsim.contrib.noise.NoiseConfigGroup;
-import org.matsim.contrib.noise.NoiseModule;
-import org.matsim.contrib.noise.NoiseOfflineCalculation;
 import org.matsim.contrib.noise.data.NoiseContext;
 import org.matsim.contrib.noise.handler.LinkSpeedCalculation;
 import org.matsim.contrib.noise.handler.NoiseTimeTracker;
 import org.matsim.contrib.noise.handler.PersonActivityTracker;
-import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.events.EventsManagerImpl;
-import org.matsim.core.events.EventsUtils;
 import org.matsim.core.events.MatsimEventsReader;
-import org.matsim.core.events.algorithms.EventWriterXML;
 import org.matsim.core.scenario.ScenarioUtils;
-import org.matsim.households.Household;
-import org.matsim.vehicles.Vehicle;
-import org.matsim.vehicles.VehicleType;
-import org.matsim.vehicles.VehicleUtils;
-import playground.jmolloy.externalitiesAnalysis.handlers.CongestionAggregator;
-import playground.vsp.congestion.handlers.CongestionHandler;
-import playground.vsp.congestion.handlers.CongestionHandlerImplV3;
+import playground.jmolloy.externalitiesAnalysis.aggregation.CongestionAggregator;
+import playground.jmolloy.externalitiesAnalysis.vsp.handlers.CongestionHandler;
+import playground.jmolloy.externalitiesAnalysis.vsp.handlers.CongestionHandlerImplV3;
 
 /**
  * Created by molloyj on 17.07.2017.
