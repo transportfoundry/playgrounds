@@ -8,32 +8,15 @@ import java.util.SortedSet;
 
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
-import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.network.NetworkFactory;
 import org.matsim.api.core.v01.network.NetworkWriter;
 import org.matsim.api.core.v01.network.Node;
-import org.matsim.core.config.Config;
-import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.network.algorithms.NetworkCleaner;
-import org.matsim.core.network.io.MatsimNetworkReader;
-import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
-import org.matsim.lanes.data.Lane;
-import org.matsim.lanes.data.Lanes;
-import org.matsim.lanes.data.LanesWriter;
-import org.matsim.lanes.data.v11.LaneData11;
-import org.matsim.lanes.data.v11.LaneData11Impl;
-import org.matsim.lanes.data.v11.LaneDefinitions11;
-import org.matsim.lanes.data.v11.LaneDefinitions11Impl;
-import org.matsim.lanes.data.v11.LaneDefinitionsReader11;
-import org.matsim.lanes.data.v11.LaneDefinitionsV11ToV20Conversion;
-import org.matsim.lanes.data.v11.LaneDefinitionsV11ToV20Conversion.UTurnCreation;
-import org.matsim.lanes.data.v11.LaneDefinitionsWriter11;
-import org.matsim.lanes.data.v11.LanesToLinkAssignment11;
-import org.matsim.lanes.data.v11.LanesToLinkAssignment11Impl;
+import org.matsim.lanes.data.*;
 import org.matsim.utils.objectattributes.ObjectAttributes;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
 
@@ -116,9 +99,7 @@ public class Transmodeler2MATSimNetwork {
 
 	private final String linkAttributesFileName;
 
-	private final String matsimLanesFile11;
-
-	private final String matsimLanesFile20;
+	private final String matsimLanesFile;
 
 	private final String matsimRoadPricingFileName;
 
@@ -133,14 +114,14 @@ public class Transmodeler2MATSimNetwork {
 	}
 
 	public Transmodeler2MATSimNetwork(final String tmNodesFileName,
-			final String tmLinksFileName, final String tmSegmentsFileName,
-			final String tmLanesFileName,
-			final String tmLaneConnectorsFileName,
-			final String matsimPlainNetworkFileName,
-			final String matsimFullFileName,
-			final String linkAttributesFileName,
-			final String matsimLanesFile11, final String matsimLanesFile20,
-			final String matsimRoadPricingFileName) {
+									  final String tmLinksFileName, final String tmSegmentsFileName,
+									  final String tmLanesFileName,
+									  final String tmLaneConnectorsFileName,
+									  final String matsimPlainNetworkFileName,
+									  final String matsimFullFileName,
+									  final String linkAttributesFileName,
+									  final String matsimLanesFile,
+									  final String matsimRoadPricingFileName) {
 		this.tmNodesFileName = tmNodesFileName;
 		this.tmLinksFileName = tmLinksFileName;
 		this.tmSegmentsFileName = tmSegmentsFileName;
@@ -149,8 +130,7 @@ public class Transmodeler2MATSimNetwork {
 		this.matsimPlainNetworkFileName = matsimPlainNetworkFileName;
 		this.matsimFullFileName = matsimFullFileName;
 		this.linkAttributesFileName = linkAttributesFileName;
-		this.matsimLanesFile11 = matsimLanesFile11;
-		this.matsimLanesFile20 = matsimLanesFile20;
+		this.matsimLanesFile = matsimLanesFile;
 		this.matsimRoadPricingFileName = matsimRoadPricingFileName;
 	}
 
@@ -378,7 +358,8 @@ public class Transmodeler2MATSimNetwork {
 		/*
 		 * (2d) Write out lanes.
 		 */
-		final LaneDefinitions11 lanedefs = new LaneDefinitions11Impl();
+		final Lanes lanedefs = LanesUtils.createLanesContainer();
+		LanesFactory lanesFactory = lanedefs.getFactory();
 
 		for (Node node : matsimNetwork.getNodes().values()) {
 
@@ -386,7 +367,7 @@ public class Transmodeler2MATSimNetwork {
 				final TransmodelerLink tmInLink = linksReader.id2link
 						.get(matsimInLink.getId().toString());
 
-				final LaneData11 lane = new LaneData11Impl(Id.create(
+				final Lane lane = lanesFactory.createLane(Id.create(
 						matsimInLink.getId().toString() + "-singleLane",
 						Lane.class));
 				lane.setNumberOfRepresentedLanes(matsimInLink
@@ -403,8 +384,7 @@ public class Transmodeler2MATSimNetwork {
 
 				if ((lane.getToLinkIds() != null)
 						&& (!lane.getToLinkIds().isEmpty())) {
-					final LanesToLinkAssignment11 lanesToLink = new LanesToLinkAssignment11Impl(
-							matsimInLink.getId());
+					final LanesToLinkAssignment lanesToLink = lanesFactory.createLanesToLinkAssignment(matsimInLink.getId());
 					lanesToLink.addLane(lane);
 					lanedefs.addLanesToLinkAssignment(lanesToLink);
 				} else {
@@ -413,28 +393,10 @@ public class Transmodeler2MATSimNetwork {
 				}
 			}
 		}
+		LanesUtils.createOriginalLanesAndSetLaneCapacities(matsimNetwork, lanedefs);
 
-		final LaneDefinitionsWriter11 laneWriter = new LaneDefinitionsWriter11(
-				lanedefs);
-		laneWriter.write(this.matsimLanesFile11);
-
-		{
-			final Config config = ConfigUtils.createConfig();
-			config.qsim().setUseLanes(true);
-			final Scenario sc = ScenarioUtils.createScenario(config);
-			final MatsimNetworkReader netReader = new MatsimNetworkReader(sc.getNetwork());
-			netReader.readFile(this.matsimPlainNetworkFileName);
-			final Network net = sc.getNetwork();
-			final LaneDefinitions11 lanedefs11 = new LaneDefinitions11Impl();
-			final LaneDefinitionsReader11 reader11 = new LaneDefinitionsReader11(
-					lanedefs11);
-			reader11.readFile(this.matsimLanesFile11);
-			final Lanes lanedefs20 = LaneDefinitionsV11ToV20Conversion
-					.convertTo20(lanedefs11, net, UTurnCreation.OFF);
-			final LanesWriter writer20 = new LanesWriter(
-					lanedefs20);
-			writer20.write(this.matsimLanesFile20);
-		}
+		final LanesWriter laneWriter = new LanesWriter(lanedefs);
+		laneWriter.write(this.matsimLanesFile);
 
 		/*
 		 * Write out road pricing file.
@@ -498,8 +460,7 @@ public class Transmodeler2MATSimNetwork {
 		final String matsimPlainFile = outputPath + "network.xml";
 		final String matsimFullFile = outputPath + "network-raw.xml";
 		final String linkAttributesFile = outputPath + "link-attributes.xml";
-		final String matsimLanesFile11 = outputPath + "lanes11.xml";
-		final String matsimLanesFile20 = outputPath + "lanes20.xml";
+		final String matsimLanesFile = outputPath + "lanes.xml";
 		final String matsimRoadPricingFile = outputPath + "toll.xml";
 
 		System.out.println("STARTED ...");
@@ -507,7 +468,7 @@ public class Transmodeler2MATSimNetwork {
 		final Transmodeler2MATSimNetwork tm2MATSim = new Transmodeler2MATSimNetwork(
 				nodesFile, linksFile, segmentsFile, lanesFile,
 				laneConnectorsFile, matsimPlainFile, matsimFullFile,
-				linkAttributesFile, matsimLanesFile11, matsimLanesFile20,
+				linkAttributesFile, matsimLanesFile,
 				matsimRoadPricingFile);
 		tm2MATSim.run();
 
