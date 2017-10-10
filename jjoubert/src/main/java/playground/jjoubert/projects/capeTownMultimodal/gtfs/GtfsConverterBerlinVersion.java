@@ -23,8 +23,14 @@
  */
 package playground.jjoubert.projects.capeTownMultimodal.gtfs;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.api.core.v01.network.Link;
 import org.matsim.api.core.v01.network.Network;
 import org.matsim.contrib.gtfs.GtfsConverter;
 import org.matsim.core.config.Config;
@@ -37,9 +43,19 @@ import org.matsim.core.scenario.MutableScenario;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
+import org.matsim.pt.transitSchedule.api.Departure;
+import org.matsim.pt.transitSchedule.api.TransitLine;
+import org.matsim.pt.transitSchedule.api.TransitRoute;
 import org.matsim.pt.transitSchedule.api.TransitScheduleWriter;
+import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 import org.matsim.pt.utils.CreatePseudoNetwork;
+import org.matsim.pt.utils.CreateVehiclesForSchedule;
+import org.matsim.vehicles.Vehicle;
+import org.matsim.vehicles.VehicleCapacity;
+import org.matsim.vehicles.VehicleCapacityImpl;
+import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleWriterV1;
+import org.matsim.vehicles.VehiclesFactory;
 import org.matsim.vis.otfvis.OTFVisConfigGroup;
 import org.matsim.vis.otfvis.OTFVisConfigGroup.ColoringScheme;
 
@@ -49,48 +65,128 @@ import playground.mrieser.pt.utils.MergeNetworks;
 import playground.southafrica.utilities.Header;
 
 /**
- *
+ * Class to combine multiple modes into single network. The public transport 
+ * networks are <i>pseudonetworks</i>, meaning they run on their own networks
+ * with no interference by car.<br><br>
+ * <b>Updates:</b><br>
+ * 201604: Added MyCiTi GTFS; using WGS84_SA_Albers.
+ * 201710: Added Metrorail GTFS; using HARTEBEESTHOEK94_Lo19. 
+ * 
  * @author jwjoubert
  */
 public class GtfsConverterBerlinVersion {
 	final private static Logger LOG = Logger.getLogger(GtfsConverterBerlinVersion.class);
-	final private static String CRS_CT = "WGS84_SA_Albers";
+	final private static String CRS_CT = TransformationFactory.HARTEBEESTHOEK94_LO19;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		Header.printHeader(GtfsConverterBerlinVersion.class.toString(), args);
-		String gtfsZipFile = args[0];
-		String transitFolder = args[1];
+		String gtfsMyCiTi = args[0];
+		String gtfsMetrorail = args[1];
+		String transitFolder = args[2];
 		transitFolder += transitFolder.endsWith("/") ? "" : "/";
-		String inputNetworkFile = args[2];
-		String outputNetworkFile = args[3];
+		String roadNetworkFile = args[3];
+		String outputNetworkFile = args[4];
 		
-		GtfsConverterBerlinVersion.convert(gtfsZipFile, transitFolder);
-		GtfsConverterBerlinVersion.mergeNetworks(inputNetworkFile, transitFolder, outputNetworkFile);
+		Scenario scMyCiTi = GtfsConverterBerlinVersion.convert(gtfsMyCiTi, "MyCiTi", "brt");
+		Scenario scMetrorail = GtfsConverterBerlinVersion.convert(gtfsMetrorail, "Metrorail", "rail");
+
+		List<Scenario> ptScenarios = new ArrayList<Scenario>();
+		ptScenarios.add(scMyCiTi);
+		ptScenarios.add(scMetrorail);
+		
+		GtfsConverterBerlinVersion.mergeNetworks(roadNetworkFile, ptScenarios, outputNetworkFile, transitFolder);
 		
 		Header.printFooter();
 	}
 	
 	
-	private static void mergeNetworks(String inputNetwork, String transitFolder, String outputNetwork){
-		LOG.trace("Merging two network:");
+	private static void mergeNetworks(String inputNetwork, List<Scenario> ptScenarios, String outputNetwork, String transitFolder){
+		LOG.trace("Merging networks...");
 		LOG.trace("    base: " + inputNetwork);
-		LOG.trace("  myCiTi: " + transitFolder + "transitNetwork.xml.gz");
 		Network baseNetwork = NetworkUtils.createNetwork();
 		new MatsimNetworkReader(baseNetwork ).readFile(inputNetwork);
 		String prefix = "";
-		Network myCiTiNetwork = NetworkUtils.createNetwork();
-		new MatsimNetworkReader(myCiTiNetwork).readFile(transitFolder + "transitNetwork.xml.gz");
-		
-		MergeNetworks.merge(baseNetwork, prefix, myCiTiNetwork);
-		new NetworkWriter(baseNetwork).write(outputNetwork);
+
+		/* Merge the network. */
+		for(Scenario sc : ptScenarios){
+			MergeNetworks.merge(baseNetwork, prefix, sc.getNetwork());
+		}
 		LOG.trace("Done merging networks.");
+		new NetworkWriter(baseNetwork).write(outputNetwork);
+
+		LOG.trace("Merging transit services...");
+		/* Merge the transit services. */
+		Scenario baseTransit = ptScenarios.get(0);
+		for(int i = 1; i < ptScenarios.size(); i++){
+			baseTransit = mergeTransitServices(baseTransit, ptScenarios.get(i));
+		}
+		LOG.trace("Done merging transit services...");
+		
+		/* Set up the transit vehicles. Strt by adding all the 'known' vehicle
+		 * types. */
+		baseTransit.getTransitVehicles().addVehicleType(MyCiTiVehicles.Type.MyCiTi_9m.getVehicleType());
+		baseTransit.getTransitVehicles().addVehicleType(MyCiTiVehicles.Type.MyCiTi_12m.getVehicleType());
+		baseTransit.getTransitVehicles().addVehicleType(MyCiTiVehicles.Type.MyCiTi_18m.getVehicleType());
+		baseTransit.getTransitVehicles().addVehicleType(MyCiTiVehicles.Type.MyCiTi_dummy.getVehicleType());
+		baseTransit.getTransitVehicles().addVehicleType(MetrorailVehicles.Type.Metrorail.getVehicleType());
+		VehiclesFactory vb = baseTransit.getVehicles().getFactory();
+		int brtId = 0;
+		int railId = 0;
+		for(TransitLine line : baseTransit.getTransitSchedule().getTransitLines().values()){
+			for(TransitRoute route : line.getRoutes().values()){
+				String mode = route.getTransportMode();
+				for(Departure departure : route.getDepartures().values()){
+					Vehicle vehicle = null;
+					switch (mode) {
+					case "brt":
+						/*FIXME This should be expanded to also look at the 
+						 * route Id and the realistic vehicle sizes. */
+						vehicle = vb.createVehicle(
+								Id.createVehicleId("brt_" + String.valueOf(brtId++)), 
+								MyCiTiVehicles.Type.MyCiTi_dummy.getVehicleType());
+						baseTransit.getTransitVehicles().addVehicle(vehicle);
+						departure.setVehicleId(vehicle.getId());
+						break;
+					case "rail":
+						/*FIXME This should be expanded to also look at the 
+						 * route Id and the realistic vehicle sizes. */
+						vehicle = vb.createVehicle(
+								Id.createVehicleId("rail_" + String.valueOf(railId++)), 
+								MetrorailVehicles.Type.Metrorail.getVehicleType());
+						baseTransit.getTransitVehicles().addVehicle(vehicle);
+						departure.setVehicleId(vehicle.getId());
+						break;
+
+					default:
+						throw new RuntimeException("Don't know what to do with mode " + mode);
+					}
+				}
+			}
+		}
+		
+		new TransitScheduleWriter(baseTransit.getTransitSchedule()).writeFile(transitFolder + "transitSchedule.xml.gz");
+		new VehicleWriterV1(((MutableScenario)baseTransit).getTransitVehicles()).writeFile(transitFolder + "transitVehicles.xml.gz");
 	}
 	
 	
-	private static void convert(String gtfsFile, String outputFolder){
+	private static Scenario mergeTransitServices(Scenario base, Scenario add){
+		/* Add stops. */
+		for(TransitStopFacility stop : add.getTransitSchedule().getFacilities().values()){
+			base.getTransitSchedule().addStopFacility(stop);
+		}
+		
+		/* Add transit lines. */
+		for(TransitLine line : add.getTransitSchedule().getTransitLines().values()){
+			base.getTransitSchedule().addTransitLine(line);
+		}
+		return base;
+	}
+	
+	
+	private static Scenario convert(String gtfsFile, String prefix, String mode){
 		Scenario sc = parseScenario(gtfsFile);
 
 		/* Convert the GTFS feed. */
@@ -107,16 +203,21 @@ public class GtfsConverterBerlinVersion {
 		CreatePseudoNetwork cpn = new CreatePseudoNetwork(
 				sc.getTransitSchedule(),
 				sc.getNetwork(),
-				"MyCiTi_");
+				prefix + "_");
 		cpn.createNetwork();
 		
-		/* Set up the transit vehicles. */
-//		CreateVehiclesForSchedule cvs = new CreateVehiclesForSchedule(sc.getTransitSchedule(), sc.getTransitVehicles());
-//		cvs.run();
+		/* Change all the links' allowed mode. */
+		for(Link link : sc.getNetwork().getLinks().values()){
+			link.setAllowedModes(Collections.singleton(mode));
+		}
+		for(TransitLine line : sc.getTransitSchedule().getTransitLines().values()){
+			for(TransitRoute route : line.getRoutes().values()){
+				route.setTransportMode(mode);
+			}
+		}
 		
-		new NetworkWriter(sc.getNetwork()).write(outputFolder + "transitNetwork.xml.gz");
-		new TransitScheduleWriter(sc.getTransitSchedule()).writeFile(outputFolder + "transitSchedule.xml.gz");
-		new VehicleWriterV1(((MutableScenario)sc).getTransitVehicles()).writeFile(outputFolder + "transitVehicles.xml.gz");
+		
+		return sc;
 	}
 
 	

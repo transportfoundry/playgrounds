@@ -39,11 +39,11 @@ import org.matsim.vehicles.VehicleTypeImpl;
  *   
  * @author jwjoubert
  */
-public class MyCiTiVehicles {
-	final private static Logger LOG = Logger.getLogger(MyCiTiVehicles.class);
+public class MetrorailVehicles {
+	final private static Logger LOG = Logger.getLogger(MetrorailVehicles.class);
 	private Map<String, Vehicle> vehicleMap;
 	
-	public MyCiTiVehicles() {
+	public MetrorailVehicles() {
 		populateVehicleMap();
 	}
 
@@ -62,32 +62,19 @@ public class MyCiTiVehicles {
 	}
 	
 	public enum Type{
-		MyCiTi_9m, MyCiTi_12m, MyCiTi_18m, MyCiTi_dummy; 
+		Metrorail; 
 		
 		public VehicleType getVehicleType(){
 			double length = 0.0;
 			VehicleCapacity capacity = new VehicleCapacityImpl();
 			switch (this) {
-			case MyCiTi_9m:
-				length = 9.0;
-				capacity.setSeats(26);
-				capacity.setStandingRoom(18);
+			case Metrorail:
+				length = 60.0;
+				capacity.setSeats(100);
+				capacity.setStandingRoom(300);
 				break;
-			case MyCiTi_12m:
-				length = 12.0;
-				capacity.setSeats(45);
-				capacity.setStandingRoom(30);
-				break;
-			case MyCiTi_18m:
-				length = 18.0;
-				capacity.setSeats(59);
-				capacity.setStandingRoom(52);
-				break;
-			case MyCiTi_dummy:
-				length = 18.0;
-				capacity.setSeats(101);
-				capacity.setStandingRoom(101);
-				break;
+			default:
+				throw new RuntimeException("Unknown vehicle type");	
 			}
 			VehicleType type = new VehicleTypeImpl(Id.create(this.name(), VehicleType.class));
 			type.setLength(length);
