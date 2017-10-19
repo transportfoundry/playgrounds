@@ -18,15 +18,17 @@
  *                                                                         *
  * *********************************************************************** */
 
-package playground.sergioo.mixedTraffic2017.qsimmixed;
+package playground.sergioo.mixedTraffic2017.qsim.qnetsimengine;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.events.VehicleEntersTrafficEvent;
 import org.matsim.api.core.v01.network.Link;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
-import org.matsim.core.mobsim.qsim.interfaces.SignalGroupState;
-import org.matsim.core.mobsim.qsim.interfaces.SignalizeableItem;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
 import org.matsim.core.utils.geometry.transformations.IdentityTransformation;
 import org.matsim.lanes.vis.VisLaneModelBuilder;
@@ -35,9 +37,9 @@ import org.matsim.vehicles.Vehicle;
 import org.matsim.vis.snapshotwriters.AgentSnapshotInfo;
 import org.matsim.vis.snapshotwriters.VisData;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import playground.sergioo.mixedTraffic2017.qsim.interfaces.SignalGroupState;
+import playground.sergioo.mixedTraffic2017.qsim.interfaces.SignalizeableItem;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.QNetsimEngine.NetsimInternalInterface;
 
 /**
  * Please read the docu of QBufferItem, QLane, QLinkInternalI (arguably to be renamed
@@ -52,14 +54,14 @@ public final class QLinkImpl extends AbstractQLink implements SignalizeableItem 
 	private final static Logger log = Logger.getLogger(QLinkImpl.class);
 	
 	public static class Builder {
-		private QNetsimEngine.NetsimInternalInterface netsimEngine ;
+		private NetsimInternalInterface netsimEngine ;
 		private final NetsimEngineContext context;
 		private LaneFactory laneFactory;
-		Builder(NetsimEngineContext context, QNetsimEngine.NetsimInternalInterface netsimEngine2) {
+		Builder(NetsimEngineContext context, NetsimInternalInterface netsimEngine2) {
 			this.context = context ;
 			this.netsimEngine = netsimEngine2;
 		} 
-		QLinkImpl build(Link link, QNode toNode ) {
+		QLinkImpl build( Link link, QNode toNode ) {
 			if ( laneFactory == null ) {
 				laneFactory = new QueueWithBuffer.Builder( context ) ;
 			}
@@ -86,8 +88,8 @@ public final class QLinkImpl extends AbstractQLink implements SignalizeableItem 
 	private final QLaneI qlane;
 
 	private NetsimEngineContext context;
-
-	private QLinkImpl(final Link link2, final QNode toNode, final LaneFactory roadFactory, NetsimEngineContext context, QNetsimEngine.NetsimInternalInterface netsimEngine) {
+	
+	private QLinkImpl(final Link link2, final QNode toNode, final LaneFactory roadFactory, NetsimEngineContext context, NetsimInternalInterface netsimEngine) {
 		super(link2, toNode, context, netsimEngine) ;
 		this.context = context ;
 		// The next line must must by contract stay within the constructor,
@@ -231,16 +233,6 @@ public final class QLinkImpl extends AbstractQLink implements SignalizeableItem 
 
 	@Override public void setSignalized(boolean isSignalized) {
 		((SignalizeableItem) qlane).setSignalized(isSignalized);
-	}
-
-	@Override
-	public boolean hasGreenForToLink(Id<Link> toLinkId) {
-		return ((SignalizeableItem) qlane).hasGreenForToLink(toLinkId);
-	}
-
-	@Override
-	public boolean hasGreenForAllToLinks() {
-		return ((SignalizeableItem) qlane).hasGreenForAllToLinks();
 	}
 
 	/**

@@ -17,7 +17,7 @@
  *                                                                         *
  * *********************************************************************** */
 
-package playground.sergioo.mixedTraffic2017.qsimmixed;
+package playground.sergioo.mixedTraffic2017.qsim.qnetsimengine;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Coord;
@@ -33,20 +33,21 @@ import org.matsim.core.gbl.Gbl;
 import org.matsim.core.gbl.MatsimRandom;
 import org.matsim.core.mobsim.framework.MobsimDriverAgent;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
-import org.matsim.core.mobsim.qsim.interfaces.SignalGroupState;
-import org.matsim.core.mobsim.qsim.interfaces.SignalizeableItem;
-import org.matsim.core.mobsim.qsim.pt.TransitDriverAgent;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.utils.misc.Time;
 import org.matsim.lanes.data.Lane;
 import org.matsim.vehicles.Vehicle;
 import org.matsim.vis.snapshotwriters.AgentSnapshotInfo;
-import playground.sergioo.mixedTraffic2017.qsimmixed.linkspeedcalculator.DefaultLinkSpeedCalculator;
-import playground.sergioo.mixedTraffic2017.qsimmixed.linkspeedcalculator.LinkSpeedCalculator;
-import playground.sergioo.mixedTraffic2017.qsimmixed.vehicleq.FIFOVehicleQ;
-import playground.sergioo.mixedTraffic2017.qsimmixed.vehicleq.PassingVehicleQ;
-import playground.sergioo.mixedTraffic2017.qsimmixed.vehicleq.SeepageVehicleQ;
-import playground.sergioo.mixedTraffic2017.qsimmixed.vehicleq.VehicleQ;
+
+import playground.sergioo.mixedTraffic2017.qsim.interfaces.SignalGroupState;
+import playground.sergioo.mixedTraffic2017.qsim.interfaces.SignalizeableItem;
+import playground.sergioo.mixedTraffic2017.qsim.pt.TransitDriverAgent;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.linkspeedcalculator.DefaultLinkSpeedCalculator;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.linkspeedcalculator.LinkSpeedCalculator;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.vehicleq.FIFOVehicleQ;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.vehicleq.PassingVehicleQ;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.vehicleq.SeepageVehicleQ;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.vehicleq.VehicleQ;
 
 import java.util.*;
 
@@ -77,7 +78,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 			if (context.qsimConfig.getLinkDynamics() == LinkDynamics.PassingQ)
 				this.vehicleQueue = new PassingVehicleQ();
 			else if(context.qsimConfig.getLinkDynamics() == LinkDynamics.SeepageQ)
-				this.vehicleQueue = new SeepageVehicleQ(context.qsimConfig.getSeepModes(), context.qsimConfig.isRestrictingSeepage()?4:0);
+				this.vehicleQueue = new SeepageVehicleQ(context.qsimConfig.getSeepModes(), context.qsimConfig.isRestrictingSeepage()?4:0, context.getSimTimer());
 		}
 		@Override public QueueWithBuffer createLane(AbstractQLink qLink ) {
 			// a number of things I cannot configure before I have the qlink:
@@ -298,7 +299,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		flowCapacityPerTimeStep = flowCapacityPerTimeStep * context.qsimConfig.getTimeStepSize() * context.qsimConfig.getFlowCapFactor() ;
 		inverseFlowCapacityPerTimeStep = 1.0 / flowCapacityPerTimeStep;
 
-        if ( context.qsimConfig.getTrafficDynamics()==TrafficDynamics.kinematicWaves) {
+        if ( context.qsimConfig.getTrafficDynamics()==TrafficDynamics.kinematicWaves ) {
 			// uncongested branch: q = vmax * rho
 			// congested branch: q = vhole * (rhojam - rho)
 			// equal: rho * (vmax + vhole) = vhole * rhojam
@@ -378,7 +379,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 
 	@Override
 	final boolean doSimStep( ) {
-        if ( context.qsimConfig.getTrafficDynamics()==TrafficDynamics.kinematicWaves) {
+        if ( context.qsimConfig.getTrafficDynamics()==TrafficDynamics.kinematicWaves ) {
             this.accumulatedInflowCap = Math.min(accumulatedInflowCap + maxFlowFromFdiag, maxFlowFromFdiag);
         }
 
@@ -456,7 +457,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 
 		if(context.qsimConfig.getLinkDynamics()==LinkDynamics.SeepageQ
 				&& context.qsimConfig.isSeepModeStorageFree()
-				&& context.qsimConfig.getSeepModes().contains(veh.getDriver().getMode()) ){
+				&& context.qsimConfig.getSeepModes().contains(veh.getVehicle().getType().getId().toString()) ){
 			// do nothing
 		} else {
 			usedStorageCapacity -= veh.getSizeInEquivalents();
@@ -542,7 +543,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 		// * reduced by entering vehicles
 		// * increased by holes arriving at upstream end of link
 
-        if ( context.qsimConfig.getTrafficDynamics() != TrafficDynamics.kinematicWaves) {
+        if ( context.qsimConfig.getTrafficDynamics() != TrafficDynamics.kinematicWaves ) {
 			return true ;
 		}
 
@@ -623,17 +624,9 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 	}
 
 	@Override
-	public final boolean hasGreenForToLink(final Id<Link> toLinkId) {
+	 final boolean hasGreenForToLink(final Id<Link> toLinkId) {
 		if (qSignalizedItem != null){
 			return qSignalizedItem.isLinkGreenForToLink(toLinkId);
-		}
-		return true; //the lane is not signalized and thus always green
-	}
-
-	@Override
-	public boolean hasGreenForAllToLinks() {
-		if (qSignalizedItem != null) {
-			return qSignalizedItem.hasGreenForAllToLinks();
 		}
 		return true; //the lane is not signalized and thus always green
 	}
@@ -716,7 +709,7 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
         if ( context.qsimConfig.getTrafficDynamics()!=TrafficDynamics.queue ) {
 			remainingHolesStorageCapacity -= veh.getSizeInEquivalents();
 		}
-        if ( context.qsimConfig.getTrafficDynamics()==TrafficDynamics.kinematicWaves) {
+        if ( context.qsimConfig.getTrafficDynamics()==TrafficDynamics.kinematicWaves ) {
 			this.accumulatedInflowCap -= veh.getFlowCapacityConsumptionInEquivalents() ;
 		}
 	}

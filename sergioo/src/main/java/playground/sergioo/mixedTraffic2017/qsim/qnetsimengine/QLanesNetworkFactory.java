@@ -18,7 +18,7 @@
  *                                                                         *
  * *********************************************************************** */
 
-package playground.sergioo.mixedTraffic2017.qsimmixed;
+package playground.sergioo.mixedTraffic2017.qsim.qnetsimengine;
 
 
 import org.matsim.api.core.v01.Scenario;
@@ -29,14 +29,19 @@ import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.groups.QSimConfigGroup;
 import org.matsim.core.mobsim.framework.MobsimTimer;
 import org.matsim.core.mobsim.qsim.interfaces.AgentCounter;
-import org.matsim.lanes.data.LanesUtils;
 import org.matsim.lanes.data.ModelLane;
 import org.matsim.lanes.data.Lanes;
 import org.matsim.lanes.data.LanesToLinkAssignment;
+import org.matsim.vis.snapshotwriters.AgentSnapshotInfoFactory;
 import org.matsim.vis.snapshotwriters.SnapshotLinkWidthCalculator;
 
-import javax.inject.Inject;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.QNetsimEngine.NetsimInternalInterface;
+
+import org.matsim.lanes.data.LanesUtils;
+
 import java.util.List;
+
+import javax.inject.Inject;
 
 
 public class QLanesNetworkFactory extends QNetworkFactory {
@@ -55,7 +60,7 @@ public class QLanesNetworkFactory extends QNetworkFactory {
 
 	private Scenario scenario;
 
-	private QNetsimEngine.NetsimInternalInterface netsimEngine;
+	private NetsimInternalInterface netsimEngine;
 	
 	@Inject 
 	public QLanesNetworkFactory( QSimConfigGroup qsimConfig, EventsManager events, Network network, Scenario scenario, Lanes lanesDefinitions ) {
@@ -68,7 +73,7 @@ public class QLanesNetworkFactory extends QNetworkFactory {
 	}
 
 	@Override
-	void initializeFactory(AgentCounter agentCounter, MobsimTimer mobsimTimer, QNetsimEngine.NetsimInternalInterface netsimEngine1) {
+	void initializeFactory(AgentCounter agentCounter, MobsimTimer mobsimTimer, NetsimInternalInterface netsimEngine1) {
 		this.netsimEngine = netsimEngine1 ;
 		double effectiveCellSize = ((Network) network).getEffectiveCellSize() ;
 		SnapshotLinkWidthCalculator linkWidthCalculator = new SnapshotLinkWidthCalculator();

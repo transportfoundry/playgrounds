@@ -17,12 +17,13 @@
  *   See also COPYING, LICENSE and WARRANTY file                           *
  *                                                                         *
  * *********************************************************************** */
-package playground.sergioo.mixedTraffic2017.qsimmixed;
+package playground.sergioo.mixedTraffic2017.qsim.qnetsimengine;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
-import org.matsim.core.mobsim.qsim.interfaces.SignalGroupState;
-import org.matsim.core.mobsim.qsim.interfaces.SignalizeableItem;
+
+import playground.sergioo.mixedTraffic2017.qsim.interfaces.SignalGroupState;
+import playground.sergioo.mixedTraffic2017.qsim.interfaces.SignalizeableItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,18 +93,7 @@ public final class DefaultSignalizeableItem implements SignalizeableItem {
 		}
 		return checkGreen(this.toLinkIdSignalStates.get(toLinkId));
 	}
-
-	public boolean hasGreenForAllToLinks() {
-		return linkGreen;
-	}
-
-	public boolean hasGreenForToLink(Id<Link> toLinkId){
-		if (this.allToLinksState != null) {
-			return checkGreen(this.allToLinksState);
-		}
-		return checkGreen(this.toLinkIdSignalStates.get(toLinkId));
-	}
-
+	
 	@Override
 	public void setSignalized(boolean isSignalized) {
 		//nothing to do

@@ -18,7 +18,17 @@
  *                                                                         *
  * *********************************************************************** */
 
-package playground.sergioo.mixedTraffic2017.qsimmixed;
+package playground.sergioo.mixedTraffic2017.qsim.qnetsimengine;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Id;
@@ -35,9 +45,9 @@ import org.matsim.lanes.vis.VisLinkWLanes;
 import org.matsim.vehicles.Vehicle;
 import org.matsim.vis.snapshotwriters.AgentSnapshotInfo;
 import org.matsim.vis.snapshotwriters.VisData;
-import playground.sergioo.mixedTraffic2017.qsimmixed.vehicleq.FIFOVehicleQ;
 
-import java.util.*;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.QNetsimEngine.NetsimInternalInterface;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.vehicleq.FIFOVehicleQ;
 
 /**
  * Please read the docu of QBufferItem, QLane, QLinkInternalI (arguably to be renamed into something
@@ -134,10 +144,10 @@ public final class QLinkLanesImpl extends AbstractQLink {
 
 	/**
 	 * Initializes a QueueLink with one QueueLane.
-	 * @param context
-	 * @param netsimEngine
+	 * @param context TODO
+	 * @param netsimEngine TODO
 	 */
-	QLinkLanesImpl(final Link link2, final QNode toNode, List<ModelLane> lanes, NetsimEngineContext context, QNetsimEngine.NetsimInternalInterface netsimEngine) {
+	QLinkLanesImpl(final Link link2, final QNode toNode, List<ModelLane> lanes, NetsimEngineContext context, NetsimInternalInterface netsimEngine) {
 		super(link2, toNode, context, netsimEngine);
 		this.context = context ;
 		this.toQueueNode = toNode;
@@ -203,7 +213,7 @@ public final class QLinkLanesImpl extends AbstractQLink {
 				}
 			}
 			queue.changeSpeedMetersPerSecond( this.getLink().getFreespeed() );
-
+			
 		}
 		// reverse the order in the linked map, i.e. upstream to downstream
 		while (!stack.isEmpty()) {
@@ -228,15 +238,16 @@ public final class QLinkLanesImpl extends AbstractQLink {
 	@Override
 	boolean doSimStep() {
 		double now = context.getSimTimer().getTimeOfDay() ;
-
+		
 		boolean lanesActive = false;
 		boolean movedWaitToRoad = false;
 		if ( context.qsimConfig.isInsertingWaitingVehiclesBeforeDrivingVehicles() ) {
+		    //TODO
 		    //Because moveBufferToNextLane() (called from moveLanes()) is kind of "moveInternalNodes()",
 		    //it should be executed before moveWaitToRoad() to keep the sequence fully consistent.
 		    //The sequence is broken only if isInsertingWaitingVehiclesBeforeDrivingVehicles==true.
 		    //Currently, the buffer of the accepting lane gets emptied after moveWaitToRoad(),
-		    //which gives preference to already driving vehicles
+		    //which gives preference to already driving vehicles 
 		    //michalm, jan'17
 			this.moveWaitToRoad(now);
 			this.getTransitQLink().handleTransitVehiclesInStopQueue(now);
@@ -255,11 +266,11 @@ public final class QLinkLanesImpl extends AbstractQLink {
 		boolean activeLane = false;
 		for (QLaneI lane : this.laneQueues.values()) {
 			// (go through all lanes)
-
+			
 			/* part A */
 			if (!this.toNodeLaneQueues.contains(lane)) {
 				// (so it HAS a link-internal next lane)
-
+				
 				// move vehicles from the lane buffer to the next lane
 				this.moveBufferToNextLane(lane);
 			} else {
@@ -271,34 +282,34 @@ public final class QLinkLanesImpl extends AbstractQLink {
 			}
 			/* end of part A */
 		}
-
+		
         for (QLaneI lane : this.laneQueues.values()) {
             lane.initBeforeSimStep();
         }
-
+        
 		for (QLaneI lane : this.laneQueues.values()) {
 			// (go through all lanes)
-
+		
 			/* part B */
 			// move vehicles to the lane buffer if they have reached their earliest lane exit time
 			lane.doSimStep();
 			/* end of part B */
-
+			
 			activeLane = activeLane || lane.isActive();
-
+			
 			/*
 			 * Remark: The order of part A and B influences the travel time on lanes.
-			 *
+			 * 
 			 * Before Jul'15 order B, A was used, such that travel time on lanes was practically
 			 * rounded down. This has the unintended effect that introducing lanes on a link may
 			 * decrease its travel time: Dividing the link into sufficient many lanes (each one
 			 * shorter than the number of meters that an agent may travel in 1 second) reduces the
 			 * link travel time to 1 second.
-			 *
+			 * 
 			 * Order A, B produces the same behavior for lanes as for links. I.e. up to one
 			 * additional second may occur for every lane, because travel times are now practically
 			 * rounded up.
-			 *
+			 * 
 			 * Theresa, Jul'15
 			 */
 		}
@@ -355,7 +366,7 @@ public final class QLinkLanesImpl extends AbstractQLink {
 
 	/**
 	 * Move as many waiting cars to the link as it is possible
-	 *
+	 * 
 	 * @param now
 	 *            the current time
 	 * @return true if at least one vehicle is moved to the buffer of this lane
@@ -413,7 +424,7 @@ public final class QLinkLanesImpl extends AbstractQLink {
 	}
 
 	@Override
-    QVehicle getVehicle(Id<Vehicle> vehicleId) {
+	QVehicle getVehicle(Id<Vehicle> vehicleId) {
 		QVehicle ret = super.getVehicle(vehicleId);
 		if (ret != null) {
 			return ret;
@@ -462,7 +473,7 @@ public final class QLinkLanesImpl extends AbstractQLink {
 	 * This method returns the normalized capacity of the link, i.e. the capacity of vehicles per
 	 * second. It is considering the capacity reduction factors set in the config and the
 	 * simulation's tick time.
-	 *
+	 * 
 	 * @return the flow capacity of this link per second, scaled by the config values and in
 	 *         relation to the SimulationTimer's simticktime.
 	 */
@@ -488,9 +499,9 @@ public final class QLinkLanesImpl extends AbstractQLink {
 
 	/**
 	 * Inner class to capsulate visualization methods
-	 *
+	 * 
 	 * @author dgrether
-	 *
+	 * 
 	 */
 	class VisDataImpl implements VisData {
 		private VisLaneModelBuilder visModelBuilder = null;
@@ -511,7 +522,7 @@ public final class QLinkLanesImpl extends AbstractQLink {
 		@Override
 		public Collection<AgentSnapshotInfo> addAgentSnapshotInfo(
 				final Collection<AgentSnapshotInfo> positions) {
-
+			
 			double now = context.getSimTimer().getTimeOfDay() ;
 
 
@@ -543,9 +554,9 @@ public final class QLinkLanesImpl extends AbstractQLink {
 			return positions;
 		}
 	}
-
+	
 	@Override
-    QLaneI getAcceptingQLane() {
+	QLaneI getAcceptingQLane() {
 		return this.firstLaneQueue ;
 	}
 
