@@ -974,7 +974,7 @@ public class PTQLink implements NetsimLink, TimeVariantLink {
 
 	public boolean hasGreenForToLink(Id<Link> toLinkId){
 		if (this.qSignalizedItem != null){
-			return this.qSignalizedItem.isLinkGreenForToLink(toLinkId);
+			return this.qSignalizedItem.hasGreenForToLink(toLinkId);
 		}
 		return true; //the lane is not signalized and thus always green
 	}
@@ -982,7 +982,7 @@ public class PTQLink implements NetsimLink, TimeVariantLink {
 	public void setSignalStateAllTurningMoves(SignalGroupState state) {
 		this.qSignalizedItem.setSignalStateAllTurningMoves(state);
 		
-		this.thisTimeStepGreen  = this.qSignalizedItem.isLinkGreen();
+		this.thisTimeStepGreen  = this.qSignalizedItem.hasGreenForAllToLinks();
 		// (this is only for capacity accumulation)
 	}
 
@@ -992,7 +992,7 @@ public class PTQLink implements NetsimLink, TimeVariantLink {
 		}
 		this.qSignalizedItem.setSignalStateForTurningMove(state, toLinkId);
 
-		this.thisTimeStepGreen = this.qSignalizedItem.isLinkGreen();
+		this.thisTimeStepGreen = this.qSignalizedItem.hasGreenForAllToLinks();
 		// (this is only for capacity accumulation.  As soon as at least one turning relation is green, the "link" is considered
 		// green).
 	}
