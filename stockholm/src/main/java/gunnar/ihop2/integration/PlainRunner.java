@@ -5,7 +5,6 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy;
-import org.matsim.lanes.data.v11.LaneDefinitonsV11ToV20Converter;
 
 public class PlainRunner {
 
@@ -15,9 +14,10 @@ public class PlainRunner {
 		Config config = ConfigUtils.loadConfig(configFileName);
 
 		// TODO Gunnar had to change this, otherwise it infers u-turns that should not be!
-		LaneDefinitonsV11ToV20Converter.main(new String[] {
-				"./input/lanes.xml", "./input/lanes20.xml",
-				"./input/network-plain.xml" });
+//		LaneDefinitonsV11ToV20Converter.main(new String[] {
+//				"./input/lanes.xml", "./input/lanes20.xml",
+//				"./input/network-plain.xml" });
+		// please use the 'new' lanes format directly. look e.g. into Transmodeler2MATSimNetwork for how to create it. tthunig, oct'17
 
 		config.network().setLaneDefinitionsFile("./input/lanes20.xml");
 		config.qsim().setUseLanes(true);
