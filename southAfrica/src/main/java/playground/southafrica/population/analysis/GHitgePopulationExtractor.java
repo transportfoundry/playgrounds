@@ -62,7 +62,7 @@ public class GHitgePopulationExtractor {
 		String output = args[1];
 		
 		Scenario sc = ScenarioUtils.createScenario(ConfigUtils.createConfig());
-		new PopulationReader(sc).readFile(surveyFolder + "population.xml.gz");
+		new PopulationReader(sc).readFile(surveyFolder + "populationCleaned.xml.gz");
 		new HouseholdsReaderV10(sc.getHouseholds()).readFile(surveyFolder + "households.xml.gz");
 		
 		BufferedWriter bw = IOUtils.getBufferedWriter(output);
