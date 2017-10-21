@@ -24,20 +24,21 @@ package playground.southafrica.population.census2011.capeTown;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
+import org.matsim.api.core.v01.network.Link;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
-import org.matsim.core.config.groups.PlansCalcRouteConfigGroup.ModeRoutingParams;
 import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.replanning.strategies.DefaultPlanStrategiesModule;
+import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.misc.Time;
 
 import playground.southafrica.utilities.Header;
@@ -68,8 +69,22 @@ public class CapeTownControler {
 		
 		Config config = setupConfig(folder, machine, fraction);
 		config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
+
+		/* FIXME Need to add 'ride' to each link as allowed mode if ever I want
+		 * to use it with the network router. */
+		Scenario sc = ScenarioUtils.loadScenario(config);
+		for(Link link : sc.getNetwork().getLinks().values()){
+			Set<String> modes = link.getAllowedModes();
+			Set<String> newModes = new HashSet<String>(modes);
+			if(modes.contains(TransportMode.car)){
+				newModes.add(TransportMode.ride);
+			}
+			link.setAllowedModes(newModes);
+		}
 		
-		Controler controler = new Controler(config);
+		Controler controler = new Controler(sc);
+		
+//		Controler controler = new Controler(config);
 		
 		/* Bind the travel time and disutility functions to all modes that will
 		 * assume network routes. */
@@ -182,16 +197,26 @@ public class CapeTownControler {
 		/*FIXME Remove ride as teleported mode, and ONLY add it as network mode. 
 		 * This was likely set up somewhere in the original Config file for the
 		 * Cape Town population. */
-		Map<String, ModeRoutingParams> map = config.plansCalcRoute().getModeRoutingParams();
-		map.remove(TransportMode.ride);
-		map.keySet();
+		config.plansCalcRoute().removeModeRoutingParams(TransportMode.ride);
 		
 		/* Indicate which are network modes. */
 		Collection<String> networkModes = new ArrayList<>();
 		networkModes.add("car");
-//		networkModes.add("ride");
+		networkModes.add("ride");
 		networkModes.add("commercial");
 		config.plansCalcRoute().setNetworkModes(networkModes);
+		
+		/* FIXME This allows for Kai's 'bushwacking' to the nearest node/link with the
+		 * correct allowed mode. But for this to work all the "interchange" 
+		 * activities must also be added to the PlanCalcScore config module. */
+//		config.plansCalcRoute().setInsertingAccessEgressWalk(true);
+		
+		/* FIXME Indicate which are mobsim main modes. This may have been
+		 * set earlier in the config file. WHY? If it is set during population 
+		 * generation (original config file) then it means we have to regenerate
+		 * the populations whenever we want to model something else, like a 
+		 * different mode (as teleported versus on the network) !!*/
+		
 		
 		/* Set overall strategy. */
 		StrategySettings expBeta = new StrategySettings();
