@@ -90,7 +90,7 @@ public class ParseTownshipShapefiles {
 		}
 		BufferedWriter bw = IOUtils.getAppendingBufferedWriter(output);
 		try {
-			bw.write("Population,Township,Employed,UnemployedFemale,UnemployedMale");
+			bw.write("Population,Township,Households,Employed,UnemployedFemale,UnemployedMale");
 			bw.newLine();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -201,9 +201,9 @@ public class ParseTownshipShapefiles {
 			
 			/* Write to file. */
 			BufferedWriter bw = IOUtils.getAppendingBufferedWriter(output);
-			String s = String.format("%s,%s,%d,%d,%d\n", 
+			String s = String.format("%s,%s,%d,%d,%d,%d\n", 
 					population.folder, township,
-					employed, unemployedFemale, unemployedMale);
+					households.size(), employed, unemployedFemale, unemployedMale);
 			try {
 				bw.write(s);
 			} catch (IOException e) {
