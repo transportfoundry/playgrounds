@@ -27,7 +27,7 @@ import org.matsim.api.core.v01.network.Link;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimVehicle;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
 import org.matsim.core.utils.geometry.transformations.IdentityTransformation;
-import org.matsim.lanes.ModelLane;
+import org.matsim.lanes.data.ModelLane;
 import org.matsim.lanes.data.Lane;
 import org.matsim.lanes.vis.VisLane;
 import org.matsim.lanes.vis.VisLaneModelBuilder;

@@ -16,14 +16,15 @@ import org.matsim.api.core.v01.events.handler.VehicleAbortsEventHandler;
 import org.matsim.api.core.v01.events.handler.VehicleEntersTrafficEventHandler;
 import org.matsim.api.core.v01.events.handler.VehicleLeavesTrafficEventHandler;
 import org.matsim.api.core.v01.network.Link;
-import org.matsim.core.mobsim.qsim.qnetsimengine.QVehicle;
-import org.matsim.core.mobsim.qsim.qnetsimengine.linkspeedcalculator.LinkSpeedCalculator;
 import org.matsim.vehicles.Vehicle;
+
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.QVehicle;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.linkspeedcalculator.LinkSpeedCalculator;
 
 public class CrowdingSpeedCalculator implements LinkSpeedCalculator, LinkEnterEventHandler, LinkLeaveEventHandler, VehicleEntersTrafficEventHandler, VehicleLeavesTrafficEventHandler, VehicleAbortsEventHandler {
 
-	private static final double RATE = 1.5;
-	private static final double SPEED_RATE = 2;
+	private static final double RATE = 2;
+	private static final double SPEED_RATE = 3;
 	private Map<Id<Link>, Integer> currentNumber = new HashMap<>();
 	private Set<String> heavyModes;
 	private Map<Id<Vehicle>, String> modes = new HashMap<>();

@@ -43,6 +43,7 @@ import org.matsim.households.HouseholdsReaderV10;
 import org.matsim.lanes.data.Lanes;
 import org.matsim.lanes.data.LanesImpl;
 import org.matsim.lanes.data.LanesReader;
+import org.matsim.lanes.data.LanesUtils;
 import org.matsim.pt.transitSchedule.api.TransitScheduleReader;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlReader;
 import org.matsim.vehicles.VehicleReaderV1;
@@ -297,7 +298,7 @@ public class ScenarioLoaderImpl {
 	}
 
 	private void loadLanes() {
-		Lanes laneDefinitions = new LanesImpl();
+		Lanes laneDefinitions = LanesUtils.createLanesContainer();
 		this.scenario.addScenarioElement(Lanes.ELEMENT_NAME, laneDefinitions);
 		String filename = this.config.network().getLaneDefinitionsFile();
 		if (filename != null) {

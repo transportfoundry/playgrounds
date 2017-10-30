@@ -623,9 +623,17 @@ final class QueueWithBuffer extends QLaneI implements SignalizeableItem {
 	}
 
 	@Override
-	 final boolean hasGreenForToLink(final Id<Link> toLinkId) {
+	public final boolean hasGreenForToLink(final Id<Link> toLinkId) {
 		if (qSignalizedItem != null){
 			return qSignalizedItem.isLinkGreenForToLink(toLinkId);
+		}
+		return true; //the lane is not signalized and thus always green
+	}
+
+	@Override
+	public boolean hasGreenForAllToLinks() {
+		if (qSignalizedItem != null) {
+			return qSignalizedItem.hasGreenForAllToLinks();
 		}
 		return true; //the lane is not signalized and thus always green
 	}

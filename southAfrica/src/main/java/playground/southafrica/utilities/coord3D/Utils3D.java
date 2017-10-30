@@ -31,10 +31,14 @@ import org.matsim.api.core.v01.Coord;
 import org.osmtools.srtm.SrtmTile;
 
 /**
- * A number of utilities to deal with 3D networks.
+ * A number of utilities to deal with 3D networks.<br><br>
+ *
+ * <b>This class was replaced with a free-standing repository based on 
+ * the <code>matsim-example-project</code>. 
  * 
  * @author jwjoubert
  */
+@Deprecated
 public class Utils3D {
 	final private static Logger LOG = Logger.getLogger(Utils3D.class);
 	private final static String SRTM_URL_AFRICA = "https://dds.cr.usgs.gov/srtm/version2_1/SRTM3/Africa/";
