@@ -9,9 +9,9 @@ import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.households.HouseholdsReaderV10;
 import org.matsim.households.IncomeImpl;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlReader;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
 import playground.southafrica.population.census2001.Census2001SampleParser;
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.nmbmTravelSurvey.NmbmSurveyParser;
 import playground.southafrica.utilities.Header;
 

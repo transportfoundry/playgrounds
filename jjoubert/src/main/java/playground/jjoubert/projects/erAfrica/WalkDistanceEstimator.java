@@ -45,11 +45,11 @@ import org.matsim.households.Household;
 import org.matsim.households.HouseholdsReaderV10;
 import org.matsim.households.Income;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlReader;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
 import playground.southafrica.population.capeTownTravelSurvey.PersonEnums;
 import playground.southafrica.population.capeTownTravelSurvey.PersonEnums.AgeGroup;
 import playground.southafrica.population.capeTownTravelSurvey.PersonEnums.Employment;
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.utilities.Header;
 
 /**

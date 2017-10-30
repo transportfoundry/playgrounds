@@ -41,8 +41,8 @@ import org.matsim.core.utils.misc.Counter;
 import org.matsim.households.Household;
 import org.matsim.households.HouseholdsReaderV10;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlReader;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.utilities.Header;
 
 /**

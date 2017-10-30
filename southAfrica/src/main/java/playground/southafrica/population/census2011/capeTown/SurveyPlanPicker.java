@@ -48,13 +48,13 @@ import org.matsim.core.utils.misc.Counter;
 import org.matsim.households.Household;
 import org.matsim.utils.objectattributes.ObjectAttributes;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import playground.southafrica.population.capeTownTravelSurvey.PersonEnums;
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.census2011.containers.Income2011;
 import playground.southafrica.population.demographics.SaDemographicsAge;
 import playground.southafrica.population.demographics.SaDemographicsEmployment;

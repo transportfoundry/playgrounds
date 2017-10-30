@@ -54,8 +54,8 @@ import org.matsim.facilities.FacilitiesUtils;
 import org.matsim.facilities.FacilitiesWriter;
 import org.matsim.households.Household;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.utilities.ComprehensivePopulationReader;
 import playground.southafrica.utilities.FileUtils;
 import playground.southafrica.utilities.Header;
