@@ -19,15 +19,16 @@
  * *********************************************************************** */
 package playground.johannes.studies.sbsurvey.io;
 
-import gnu.trove.map.hash.TIntIntHashMap;
-import net.opengis.kml._2.FolderType;
+import java.util.Arrays;
+import java.util.Set;
+
 import org.matsim.contrib.socnetgen.sna.graph.Vertex;
 import org.matsim.contrib.socnetgen.sna.graph.spatial.SpatialVertex;
 import org.matsim.contrib.socnetgen.sna.graph.spatial.io.KMLComponents;
 import org.matsim.contrib.socnetgen.sna.snowball.SampledVertex;
 
-import java.util.Arrays;
-import java.util.Set;
+import gnu.trove.map.hash.TIntIntHashMap;
+import net.opengis.kml.v_2_2_0.FolderType;
 
 /**
  * @author illenberger

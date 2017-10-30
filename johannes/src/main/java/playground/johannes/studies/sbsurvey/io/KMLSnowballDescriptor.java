@@ -19,9 +19,10 @@
  * *********************************************************************** */
 package playground.johannes.studies.sbsurvey.io;
 
-import net.opengis.kml._2.PlacemarkType;
 import org.matsim.contrib.socnetgen.sna.graph.spatial.io.KMLObjectDetail;
 import org.matsim.contrib.socnetgen.sna.snowball.SampledVertex;
+
+import net.opengis.kml.v_2_2_0.PlacemarkType;
 
 /**
  * @author illenberger

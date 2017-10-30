@@ -19,7 +19,11 @@
  * *********************************************************************** */
 package playground.johannes.studies.sbsurvey.run;
 
-import net.opengis.kml._2.FolderType;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.matsim.contrib.socnetgen.sna.graph.Vertex;
 import org.matsim.contrib.socnetgen.sna.graph.analysis.FixedSizeRandomPartition;
 import org.matsim.contrib.socnetgen.sna.graph.analysis.RandomPartition;
@@ -30,12 +34,9 @@ import org.matsim.contrib.socnetgen.sna.graph.spatial.io.KMLPartitions;
 import org.matsim.contrib.socnetgen.sna.graph.spatial.io.SpatialGraphKMLWriter;
 import org.matsim.contrib.socnetgen.sna.graph.spatial.io.SpatialGraphMLReader;
 import org.matsim.contrib.socnetgen.sna.snowball.sim.SnowballSampler;
-import playground.johannes.studies.sbsurvey.io.KMLTimeSpan;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import net.opengis.kml.v_2_2_0.FolderType;
+import playground.johannes.studies.sbsurvey.io.KMLTimeSpan;
 
 /**
  * @author illenberger

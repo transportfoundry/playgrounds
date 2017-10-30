@@ -19,7 +19,12 @@
  * *********************************************************************** */
 package playground.johannes.studies.sbsurvey.run;
 
-import net.opengis.kml._2.FolderType;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.matsim.contrib.socnetgen.sna.graph.Vertex;
 import org.matsim.contrib.socnetgen.sna.graph.VertexDecorator;
 import org.matsim.contrib.socnetgen.sna.graph.analysis.VertexFilter;
@@ -45,15 +50,11 @@ import org.matsim.contrib.socnetgen.sna.snowball.social.SocialSampledEdgeDecorat
 import org.matsim.contrib.socnetgen.sna.snowball.social.SocialSampledGraphProjection;
 import org.matsim.contrib.socnetgen.sna.snowball.social.SocialSampledGraphProjectionBuilder;
 import org.matsim.contrib.socnetgen.sna.snowball.social.SocialSampledVertexDecorator;
+
+import net.opengis.kml.v_2_2_0.FolderType;
 import playground.johannes.studies.sbsurvey.io.KMLNeighbors;
 import playground.johannes.studies.sbsurvey.io.KMLTimeSpan;
 import playground.johannes.studies.sbsurvey.io.SocialSparseGraphMLReader;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author illenberger
