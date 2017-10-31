@@ -45,6 +45,7 @@ import org.matsim.core.utils.misc.Counter;
 import org.matsim.households.Household;
 import org.matsim.households.Income;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlReader;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -53,7 +54,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.utilities.Header;
 
 /**
