@@ -7,7 +7,7 @@ import org.matsim.core.config.groups.QSimConfigGroup;
 import org.matsim.core.mobsim.framework.Mobsim;
 import org.matsim.core.mobsim.framework.MobsimFactory;
 import org.matsim.core.mobsim.qsim.QSim;
-import org.matsim.core.mobsim.qsim.TeleportationEngine;
+import org.matsim.core.mobsim.qsim.DefaultTeleportationEngine;
 import org.matsim.core.mobsim.qsim.agents.AgentFactory;
 import org.matsim.core.mobsim.qsim.agents.PopulationAgentSource;
 import org.matsim.core.mobsim.qsim.pt.ComplexTransitStopHandlerFactory;
@@ -56,7 +56,7 @@ public class PassivePlanningSocialFactory implements MobsimFactory {
 		qSim.addMobsimEngine(activityEngine);
 		qSim.addActivityHandler(activityEngine);
         QNetsimEngineModule.configure(qSim);
-		TeleportationEngine teleportationEngine = new TeleportationEngine(sc, eventsManager);
+		DefaultTeleportationEngine teleportationEngine = new DefaultTeleportationEngine(sc, eventsManager);
 		qSim.addMobsimEngine(teleportationEngine);
 		AgentFactory agentFactory;
 		if(sc.getConfig().transit().isUseTransit()) {

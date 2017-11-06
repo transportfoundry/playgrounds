@@ -131,4 +131,10 @@ public class PassivePlanningActivityEngine implements MobsimEngine, ActivityHand
 		}
 	}
 
+	@Override
+	public void rescheduleActivityEnd(MobsimAgent agent) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

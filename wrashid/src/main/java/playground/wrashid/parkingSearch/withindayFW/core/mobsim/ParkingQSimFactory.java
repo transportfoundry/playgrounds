@@ -28,7 +28,7 @@ import org.matsim.core.mobsim.framework.AgentSource;
 import org.matsim.core.mobsim.framework.MobsimFactory;
 import org.matsim.core.mobsim.qsim.ActivityEngine;
 import org.matsim.core.mobsim.qsim.QSim;
-import org.matsim.core.mobsim.qsim.TeleportationEngine;
+import org.matsim.core.mobsim.qsim.DefaultTeleportationEngine;
 import org.matsim.core.mobsim.qsim.agents.AgentFactory;
 import org.matsim.core.mobsim.qsim.agents.DefaultAgentFactory;
 import org.matsim.core.mobsim.qsim.interfaces.Netsim;
@@ -75,7 +75,7 @@ public class ParkingQSimFactory implements MobsimFactory {
 		qSim1.addMobsimEngine(activityEngine);
 		qSim1.addActivityHandler(activityEngine);
         QNetsimEngineModule.configure(qSim1);
-		TeleportationEngine teleportationEngine = new TeleportationEngine(sc, eventsManager);
+		DefaultTeleportationEngine teleportationEngine = new DefaultTeleportationEngine(sc, eventsManager);
 		qSim1.addMobsimEngine(teleportationEngine);
 		qSim1.addMobsimEngine(replanningManager);
         QSim qSim = qSim1;

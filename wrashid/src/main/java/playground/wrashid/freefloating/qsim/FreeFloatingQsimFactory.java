@@ -10,7 +10,7 @@ import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.groups.QSimConfigGroup;
 import org.matsim.core.mobsim.qsim.ActivityEngine;
 import org.matsim.core.mobsim.qsim.QSim;
-import org.matsim.core.mobsim.qsim.TeleportationEngine;
+import org.matsim.core.mobsim.qsim.DefaultTeleportationEngine;
 import org.matsim.core.mobsim.qsim.agents.AgentFactory;
 import org.matsim.core.mobsim.qsim.agents.PopulationAgentSource;
 import org.matsim.core.mobsim.qsim.changeeventsengine.NetworkChangeEventsEngine;
@@ -58,7 +58,7 @@ public class FreeFloatingQsimFactory implements Provider<Netsim>{
 
         QNetsimEngineModule.configure(qSim);
 		
-		TeleportationEngine teleportationEngine = new TeleportationEngine(sc, eventsManager);
+		DefaultTeleportationEngine teleportationEngine = new DefaultTeleportationEngine(sc, eventsManager);
 		qSim.addMobsimEngine(teleportationEngine);
 				
 		AgentFactory agentFactory = null;			
