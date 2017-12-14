@@ -40,7 +40,7 @@ import org.matsim.withinday.mobsim.WithinDayEngine;
 import org.matsim.withinday.replanning.identifiers.tools.ActivityReplanningMap;
 import org.matsim.withinday.replanning.identifiers.tools.LinkReplanningMap;
 import org.matsim.withinday.trafficmonitoring.EarliestLinkExitTimeProvider;
-import org.matsim.withinday.trafficmonitoring.TravelTimeCollector;
+import org.matsim.withinday.trafficmonitoring.WithinDayTravelTime;
 
 import javax.inject.Provider;
 import java.util.Collections;
@@ -66,8 +66,8 @@ public abstract class WithinDayController implements StartupListener, MobsimInit
 	 */
 	private int numReplanningThreads = 2;
 
-	private TravelTimeCollector travelTimeCollector;
-	private Set<String> travelTimeCollectorModes = null;
+	private WithinDayTravelTime WithinDayTravelTime;
+	private Set<String> WithinDayTravelTimeModes = null;
 	private ActivityReplanningMap activityReplanningMap;
 	private LinkReplanningMap linkReplanningMap;
 	private EarliestLinkExitTimeProvider earliestLinkExitTimeProvider;
@@ -111,32 +111,32 @@ public abstract class WithinDayController implements StartupListener, MobsimInit
 		return this.numReplanningThreads;
 	}
 	
-	public void setModesAnalyzedByTravelTimeCollector(Set<String> modes) {
-		this.travelTimeCollectorModes = modes;
+	public void setModesAnalyzedByWithinDayTravelTime(Set<String> modes) {
+		this.WithinDayTravelTimeModes = modes;
 	}
 	
-	public Set<String> getModesAnalyzedByTravelTimeCollector() {
-		return Collections.unmodifiableSet(this.travelTimeCollectorModes);
+	public Set<String> getModesAnalyzedByWithinDayTravelTime() {
+		return Collections.unmodifiableSet(this.WithinDayTravelTimeModes);
 	}
 	
-	public void createAndInitTravelTimeCollector() {
-		this.createAndInitTravelTimeCollector(this.travelTimeCollectorModes);
+	public void createAndInitWithinDayTravelTime() {
+		this.createAndInitWithinDayTravelTime(this.WithinDayTravelTimeModes);
 	}
 
-	public void createAndInitTravelTimeCollector(Set<String> analyzedModes) {
+	public void createAndInitWithinDayTravelTime(Set<String> analyzedModes) {
 		if (controler.getEvents() == null) {
-			log.warn("Cannot create and init the TravelTimeCollector. EventsManager has not be initialized yet!");
+			log.warn("Cannot create and init the WithinDayTravelTime. EventsManager has not be initialized yet!");
 			return;
 		}
-		if (travelTimeCollector == null) {
-			travelTimeCollector = new TravelTimeCollector(controler.getScenario(), analyzedModes);
-			fosl.addSimulationListener(travelTimeCollector);
-			controler.getEvents().addHandler(travelTimeCollector);
+		if (WithinDayTravelTime == null) {
+			WithinDayTravelTime = new WithinDayTravelTime(controler.getScenario(), analyzedModes);
+			fosl.addSimulationListener(WithinDayTravelTime);
+			controler.getEvents().addHandler(WithinDayTravelTime);
 		}
 	}
 
-	public TravelTimeCollector getTravelTimeCollector() {
-		return this.travelTimeCollector;
+	public WithinDayTravelTime getWithinDayTravelTime() {
+		return this.WithinDayTravelTime;
 	}
 
 	public void createAndInitActivityReplanningMap() {
@@ -243,7 +243,7 @@ public abstract class WithinDayController implements StartupListener, MobsimInit
 		this.initWithinDayEngine(this.numReplanningThreads);
 		this.createAndInitEarliestLinkExitTimeProvider();
 		this.createAndInitMobsimDataProvider();
-		this.createAndInitTravelTimeCollector();
+		this.createAndInitWithinDayTravelTime();
 		this.createAndInitActivityReplanningMap();
 		this.createAndInitLinkReplanningMap();
 	}

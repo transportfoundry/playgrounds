@@ -84,18 +84,18 @@ public abstract class WithinDayParkingController extends WithinDayController imp
 		
 		Set<String> analyzedModes = new HashSet<String>();
 		analyzedModes.add(TransportMode.car);
-		super.createAndInitTravelTimeCollector(analyzedModes);
-		TravelTimeFactoryWrapper travelTimeCollectorWrapperFactory = new TravelTimeFactoryWrapper(this.getTravelTimeCollector());
+		super.createAndInitWithinDayTravelTime(analyzedModes);
+		TravelTimeFactoryWrapper WithinDayTravelTimeWrapperFactory = new TravelTimeFactoryWrapper(this.getWithinDayTravelTime());
 
 		// create a copy of the MultiModalTravelTimeWrapperFactory and set the
-		// TravelTimeCollector for car mode
+		// WithinDayTravelTime for car mode
 		MultiModalTravelTimeWrapperFactory timeFactory = new MultiModalTravelTimeWrapperFactory();
 		for (Entry<String, PersonalizableTravelTimeFactory> entry : this.getMultiModalTravelTimeWrapperFactory()
 				.getPersonalizableTravelTimeFactories().entrySet()) {
 			timeFactory.setPersonalizableTravelTimeFactory(entry.getKey(), entry.getValue());
 		}
 
-		timeFactory.setPersonalizableTravelTimeFactory(TransportMode.car, travelTimeCollectorWrapperFactory);
+		timeFactory.setPersonalizableTravelTimeFactory(TransportMode.car, WithinDayTravelTimeWrapperFactory);
 
 		TravelDisutilityFactory costFactory = new OnlyTimeDependentTravelCostCalculatorFactory();
 
@@ -146,7 +146,7 @@ public abstract class WithinDayParkingController extends WithinDayController imp
 //        new WorldConnectLocations(this.getConfig()).connectFacilitiesWithLinks(getScenario().getActivityFacilities(), (NetworkImpl) getScenario().getNetwork());
 //
 //		super.initWithinDayEngine(numReplanningThreads);
-//		super.createAndInitTravelTimeCollector();
+//		super.createAndInitWithinDayTravelTime();
 //		super.createAndInitLinkReplanningMap();
 //
 //		// ensure that all agents' plans have valid mode chains
@@ -168,7 +168,7 @@ public abstract class WithinDayParkingController extends WithinDayController imp
 //		this.getEvents().addHandler(this.parkingAgentsTracker);
 //		this.addControlerListener(parkingAgentsTracker);
 //
-//		RoutingContext routingContext = new RoutingContextImpl(this.getTravelDisutilityFactory(), super.getTravelTimeCollector(), this.getConfig().planCalcScore());
+//		RoutingContext routingContext = new RoutingContextImpl(this.getTravelDisutilityFactory(), super.getWithinDayTravelTime(), this.getConfig().planCalcScore());
 //		
 //		insertParkingActivities = new InsertParkingActivities(getScenario(), this.getWithinDayTripRouterFactory().get(routingContext), parkingInfrastructure);
 //
