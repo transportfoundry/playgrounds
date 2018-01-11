@@ -65,9 +65,13 @@ import playground.southafrica.utilities.Header;
  * adjusts each activity's location by considering the leg's distance, and the
  * location of actual parsed activity facilities (OpenStreetMap, Cape Town 
  * landuse, or Cape Town's informal settlements).
+ * 
+ * NOTE: This class is replaced by the org.matsim.scenarios.capeTown in the
+ * matsim-data repository.
  *  
  * @author jwjoubert
  */
+@Deprecated
 public class ERAfricaActivityLocationAdjuster {
 	final private static Logger LOG = Logger.getLogger(ERAfricaActivityLocationAdjuster.class);
 	private Scenario sc;

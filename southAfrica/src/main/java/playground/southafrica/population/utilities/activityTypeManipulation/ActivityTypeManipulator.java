@@ -52,8 +52,11 @@ import playground.southafrica.population.utilities.PopulationUtils;
  * (TODO That R class should be updated as it is used for more than just survey
  * activities, JWJ - June 2014)
  *
+ * This class is replaced by org.matsim.population.utilities.activityTypeManipulation.ActivityTypeManipulator
+ * in the matsim-data repository. 
  * @author jwjoubert
  */
+@Deprecated
 public abstract class ActivityTypeManipulator {
 	protected final static Logger LOG = Logger.getLogger(ActivityTypeManipulator.class);
 	protected Scenario sc;

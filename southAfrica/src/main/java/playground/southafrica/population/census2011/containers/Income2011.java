@@ -32,6 +32,8 @@ import org.matsim.households.Income.IncomePeriod;
  *
  * @author jwjoubert
  */
+@Deprecated
+/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 public enum Income2011 {
 	No_Income, Income_5K, Income_10K, Income_20K, Income_38K, 
 	Income_77K, Income_154K, Income_308K, Income_614K, Income_1228K, 

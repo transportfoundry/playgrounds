@@ -44,8 +44,12 @@ import playground.southafrica.utilities.Header;
  * and population attribute file, we cannot use the {@link HouseholdSampler}.
  * This class samples a user-specified fraction of commercial vehicles.
  * 
+ * This class was replaced with org.matsim.population.freight.FreightPopulationSampler
+ * in the matsim-data reposiotry.
+ * 
  * @author jwjoubert
  */
+@Deprecated
 public class FreightPopulationSampler {
 
 	/**

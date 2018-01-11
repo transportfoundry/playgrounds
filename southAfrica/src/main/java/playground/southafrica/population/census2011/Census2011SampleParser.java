@@ -61,6 +61,8 @@ import playground.southafrica.population.census2011.containers.School2011;
 import playground.southafrica.population.utilities.SAIncomeConverter;
 import playground.southafrica.utilities.Header;
 
+@Deprecated
+/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 public class Census2011SampleParser {
 	static final Logger LOG = Logger.getLogger(Census2011SampleParser.class);
 	private Map<Id<Household>,String> householdMap = new HashMap<>();

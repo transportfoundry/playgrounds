@@ -22,6 +22,8 @@ import playground.southafrica.utilities.Header;
  *
  * @author jwjoubert
  */
+@Deprecated
+/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 public class ComprehensivePopulationReader {
 	private static final Logger LOG = Logger.getLogger(Census2001SampleParser.class);
 	private Scenario sc;

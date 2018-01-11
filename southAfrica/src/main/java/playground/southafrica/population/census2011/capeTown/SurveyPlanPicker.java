@@ -73,8 +73,12 @@ import playground.southafrica.utilities.RandomPermutation;
  * changed to that of the travel diary. If that is a problem, you need to 
  * manually transform the coordinates outside of this class.
  *
+ * This should be replaced with org.matsim.scenarios.capeTown.travelDiary2013
+ * in the matsim-data repository.
+ *
  * @author jwjoubert
  */
+@Deprecated
 public class SurveyPlanPicker {
 	private final static Logger LOG = Logger.getLogger(SurveyPlanPicker.class);
 	private final static int NUMBER_OF_NEIGHBOURS = 20;

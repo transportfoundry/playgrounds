@@ -29,6 +29,8 @@ import org.apache.log4j.Logger;
  *
  * @author jwjoubert
  */
+@Deprecated
+/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 public enum HousingType2011 {
 	House, Hostel, Hotel, OldAgeHome, Other, NotApplicable;
 	

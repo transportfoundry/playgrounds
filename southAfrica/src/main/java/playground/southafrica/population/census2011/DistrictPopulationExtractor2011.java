@@ -11,7 +11,6 @@ import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PopulationWriter;
 import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.scenario.MutableScenario;
 import org.matsim.core.scenario.ScenarioUtils;
 import org.matsim.core.utils.misc.Counter;
 import org.matsim.households.Household;
@@ -30,6 +29,8 @@ import playground.southafrica.utilities.Header;
  *
  * @author jwjoubert
  */
+@Deprecated
+/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 public class DistrictPopulationExtractor2011 {
 	private final static Logger LOG = Logger.getLogger(DistrictPopulationExtractor2011.class);
 	private final Scenario sc;

@@ -52,8 +52,12 @@ import playground.southafrica.utilities.Header;
  * that tend to exceed 24:00:00. The agent, or {@link Person}, is replaced 
  * with any <i><b>one</b></i> of the resulting segments of the plan.
  * 
+ * This class was replaced with org.matsim.population.freight.ChainChopper in
+ * the matsim-data repository.
+ * 
  * @author jwjoubert
  */
+@Deprecated
 public class ChainChopper {
 	final private static Logger LOG = Logger.getLogger(ChainChopper.class);
 	final public static Double AVERAGE_SPEED = 60.0/3.6;
