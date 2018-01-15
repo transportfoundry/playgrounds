@@ -21,12 +21,12 @@ public class ScalingPersonAttributes {
 		
 		MutableScenario sc = (MutableScenario) ScenarioUtils.createScenario(ConfigUtils.createConfig());
 		MatsimReader populationReader = new PopulationReader(sc);
-		MatsimNetworkReader networkReader = new MatsimNetworkReader(sc.getNetwork());
-		networkReader.readFile(args[0]);
-		populationReader.readFile(args[1]);
+		//MatsimNetworkReader networkReader = new MatsimNetworkReader(sc.getNetwork());
+		//networkReader.readFile(args[0]);
+		populationReader.readFile(args[0]);
 				
-		BufferedReader readLink = IOUtils.getBufferedReader("C:/Users/balacm/Desktop/desiresAttributes_100perc.xml.gz");
-		final BufferedWriter outLink = IOUtils.getBufferedWriter("C:/Users/balacm/Desktop/desiresAttributes_10perc.xml");
+		BufferedReader readLink = IOUtils.getBufferedReader("C:/Users/balacm/Desktop/scenario/scenario_10p/abmt_population_attributes.xml.gz");
+		final BufferedWriter outLink = IOUtils.getBufferedWriter("C:/Users/balacm/Desktop/scenario/scenario_10p/abmt_population_attributes_scaled.xml.gz");
 
 		outLink.write(readLink.readLine());
 		outLink.newLine();
@@ -42,22 +42,25 @@ public class ScalingPersonAttributes {
 		String s = readLink.readLine();
 				
 		while(!s.contains("</objectAttributes>")) {
-			
-			if (sc.getPopulation().getPersons().containsKey(Id.create(s.substring(s.indexOf("=") + 2, s.indexOf(">") - 1), Person.class))){
-				outLink.write(s);
-				outLink.newLine();
-				s = readLink.readLine();
-				while (!s.contains("</object>")) {
-					
+			if (s.contains("object")) {
+				if (sc.getPopulation().getPersons().containsKey(Id.create(s.substring(s.indexOf("=") + 2, s.indexOf(">") - 1), Person.class))){
 					outLink.write(s);
 					outLink.newLine();
-
 					s = readLink.readLine();
-					
+					while (!s.contains("</object>")) {
+						
+						outLink.write(s);
+						outLink.newLine();
+	
+						s = readLink.readLine();
+						
+					}
+					outLink.write(s);
+					outLink.newLine();
+					s = readLink.readLine();
 				}
-				outLink.write(s);
-				outLink.newLine();
-				s = readLink.readLine();
+				else
+					s = readLink.readLine();
 			}
 			else
 				s = readLink.readLine();
