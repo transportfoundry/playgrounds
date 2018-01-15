@@ -71,9 +71,12 @@ public class SetupParkingForOptimizationScenario {
 		String baseDir = config.getParam("parkingChoice.ZH", "parkingDataDirectory");
 		
 		LinkedList<PParking> parkings = getParking(config, baseDir);
-		String permitsFilePath = "C:\\LocalDocuments\\Projects\\Parking\\Tests\\Input\\permits.txt"; 		
+		String permitsFilePath = config.getParam("parkingChoice.ZH", "parkingDataDirectory") + "permits.txt"; 
+		String livinglocationFilePath = config.getParam("parkingChoice.ZH", "parkingDataDirectory") + "livesinzurich.txt"; 		
+
 		Map<Id<Person>, Set<String>> permitsPerPerson = readPermits(permitsFilePath);
-	
+		Map<Id<Person>, Boolean> livesinzurich = readLivingLocation(livinglocationFilePath);
+
 		ParkingScoreManager parkingScoreManager = prepareParkingScoreManager(parkingModule, parkings, 
 				controler, permitsPerPerson);
 		
@@ -82,7 +85,7 @@ public class SetupParkingForOptimizationScenario {
 		
 		
 		ParkingInfrastructureManager pim = new ParkingInfrastructureManager(parkingScoreManager, null,
-				permitsPerPerson);
+				permitsPerPerson, livesinzurich);
 		
 		String cityZonesFilePath = config.getParam("parkingChoice.ZH", "cityZonesFile");
 		CityZones cityZones = new CityZones(cityZonesFilePath);
@@ -154,6 +157,24 @@ public class SetupParkingForOptimizationScenario {
 		appendScoringFactory(parkingModule, controler);
 	}
 
+	private static Map<Id<Person>, Boolean> readLivingLocation(String livinglocationFilePath) throws IOException {
+
+		Map<Id<Person>, Boolean> livingLocation = new HashMap<>();
+
+		final BufferedReader readerPermits = IOUtils.getBufferedReader(livinglocationFilePath);
+		
+		String s = readerPermits.readLine();
+		
+		while (s != null) {
+			
+			livingLocation.put(Id.createPersonId(s), true);
+			
+			s = readerPermits.readLine();
+		}
+		
+		return livingLocation;
+	}
+
 	private static Map<Id<Person>, Set<String>> readPermits(String permitsFilePath) throws IOException {
 
 		Map<Id<Person>, Set<String>> permits = new HashMap<>();
@@ -170,7 +191,7 @@ public class SetupParkingForOptimizationScenario {
 			
 			permits.put(Id.createPersonId(arr[0]), allPermits);
 			
-			
+			s = readerPermits.readLine();
 		}
 		return permits;
 	}

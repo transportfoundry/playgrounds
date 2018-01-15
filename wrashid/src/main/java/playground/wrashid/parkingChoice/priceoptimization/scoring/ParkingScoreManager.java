@@ -79,7 +79,7 @@ public final class ParkingScoreManager {
 		if (parking.getId().toString().contains("stp")){
 			DebugLib.emptyFunctionForSettingBreakPoint();
 		}
-
+	
 		return (parkingWalkBeta * walkingTimeTotalInMinutes) * parkingScoreScalingFactor;
 	}
 
@@ -93,6 +93,7 @@ public final class ParkingScoreManager {
 	
 	public double calcScore(Coord destCoord, double arrivalTime, double parkingDurationInSeconds, PC2Parking parking, 
 			Id<Person> personId, int legIndex, boolean setCostToZero, String actType) {
+		
 		double walkScore = calcWalkScore(destCoord, parking, personId, parkingDurationInSeconds);
 		double costScore = 0.0;
 		if (actType.equals("home")) {
@@ -140,7 +141,7 @@ public final class ParkingScoreManager {
 		if (randomErrorTermManager!=null){
 			randomError= randomErrorTermManager.getEpsilonAlternative(parking.getId(),personId,legIndex)*randomErrorTermScalingFactor*parkingScoreScalingFactor;
 		}
-		return costScore + walkScore + randomError;
+	return costScore + walkScore + randomError;
 	}
 
 	public double getScore(Id<Person> id) {

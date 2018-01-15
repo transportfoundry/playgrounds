@@ -76,10 +76,11 @@ public final class ParkingInfrastructureManager {
 
 	private Map<Id<Person>, Set<String>> permitsPerPerson;
 	
+	private Map<Id<Person>, Boolean> livesInCity;
 	
 
 	public ParkingInfrastructureManager(ParkingScoreManager parkingScoreManager, EventsManager eventsManager, 
-			Map<Id<Person>, Set<String>> permitsPerPerson) {
+			Map<Id<Person>, Set<String>> permitsPerPerson, Map<Id<Person>, Boolean> livesinzurich) {
 		this.parkingScoreManager = parkingScoreManager;
 		this.eventsManager = eventsManager;
 		parkedVehicles = new HashMap<>();
@@ -87,6 +88,7 @@ public final class ParkingInfrastructureManager {
 		privateParkingsRestrictedToFacilities = new LinkedListValueHashMap<>();
 		rentablePrivateParking = new HashMap<>();
 		this.permitsPerPerson = permitsPerPerson;
+		this.livesInCity = livesinzurich;
 	}
 
 	public synchronized void setPublicParkings(LinkedList<PublicParking> publicParkings) {
@@ -224,71 +226,135 @@ public final class ParkingInfrastructureManager {
 
 		PC2Parking selectedParking = null;
 		boolean parkingFound = false;
-		PriorityQueue<SortableMapObject<PC2Parking>> queue = new PriorityQueue<SortableMapObject<PC2Parking>>();
-
+		//PriorityQueue<SortableMapObject<PC2Parking>> queue = new PriorityQueue<SortableMapObject<PC2Parking>>();		
 		
-		//first check if the person parks at home location
-		if (parkingOperationRequestAttributes.actType.equals("home")) {
-			
-			//check if he has a garage permit
-			if (this.permitsPerPerson.containsKey(parkingOperationRequestAttributes.personId) && 
-					this.permitsPerPerson.get(parkingOperationRequestAttributes.personId).contains("garage")) {
-				boolean notFound = true;
-				double distance = 500;
-				while (notFound) {
+		
+		if (livesInCity.containsKey(parkingOperationRequestAttributes.personId)) {
+			if (parkingOperationRequestAttributes.actType.equals("home")) {
+				PriorityQueue<SortableMapObject<PC2Parking>> queue = new PriorityQueue<SortableMapObject<PC2Parking>>();
+
+				if ((this.permitsPerPerson.containsKey(parkingOperationRequestAttributes.personId) &&
+						this.permitsPerPerson.get(parkingOperationRequestAttributes.personId).contains("blue"))){
+										
+					double distance = 250;
 					
-					
-					Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
-					distance *= 2;
-					if (distance > 100000000) {
-						// stop infinite loop
-						DebugLib.stopSystemAndReportInconsistency(
-								"not enough public parking in scenario - introduce dummy parking to solve problem");
-					}
-					for (PC2Parking parking : collection) {
-						if (parking instanceof OptimizableParking) {
-							
-							if (parking.getGroupName().equals("garageParking")) {
-								double score = parkingScoreManager.calcWalkScore(parkingOperationRequestAttributes.destCoordinate, parking, 
-										parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.parkingDurationInSeconds);
-								queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-								notFound = false;
+					boolean notFound = true;
+					while (notFound) {
+						Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
+						distance *= 2;
+						if (distance > 100000000) {
+							// stop infinite loop
+							DebugLib.stopSystemAndReportInconsistency(
+									"not enough public parking in scenario - introduce dummy parking to solve problem");
+						}
+						for (PC2Parking parking : collection) {
+							double score = parkingScoreManager.calcWalkScore(parkingOperationRequestAttributes.destCoordinate, parking, 
+									parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.parkingDurationInSeconds);
+							if (parking instanceof OptimizableParking && 						
+									((OptimizableParking) parking).isBlueZone()) { 														
+									queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
+									notFound = false;
 							}
-						}
-						
-					}	
+						}	
+					}					
 				}
-				
-			}
-			else if (this.permitsPerPerson.containsKey(parkingOperationRequestAttributes.personId) &&
-					this.permitsPerPerson.get(parkingOperationRequestAttributes.personId).contains("blue")){
-				double distance = 500;
-				
-				boolean notFound = true;
-				while (notFound) {
+				else {
+					for (PPRestrictedToFacilities pp : privateParkingsRestrictedToFacilities
+							.get(parkingOperationRequestAttributes.facilityId)) {
+						if (pp.getAvailableParkingCapacity() > 0) {
+
+							// this tells the parking lot to decrease the number of
+							// available spaces:
+							pp.parkVehicle();
+
+							// this puts the personId (!!!! yyyyyy) at the parking location:
+							parkedVehicles.put(parkingOperationRequestAttributes.personId, pp.getId());
+
+							parkingFound = true;
+							selectedParking = pp;
+						}
+					}					
 					
-					Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
-					distance *= 2;
-					if (distance > 100000000) {
-						// stop infinite loop
-						DebugLib.stopSystemAndReportInconsistency(
-								"not enough public parking in scenario - introduce dummy parking to solve problem");
-					}
-					for (PC2Parking parking : collection) {
-						double score = parkingScoreManager.calcWalkScore(parkingOperationRequestAttributes.destCoordinate, parking, 
-								parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.parkingDurationInSeconds);
-						if (parking instanceof OptimizableParking && 						
-								((OptimizableParking) parking).isBlueZone()) { 														
-								queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-								notFound = false;
-						}
-					}	
+					if (!parkingFound) {
+						double distance = 250;
+						
+						boolean notFound = true;
+						while (notFound) {
+							Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
+							distance *= 2;
+							if (distance > 100000000) {
+								// stop infinite loop
+								DebugLib.stopSystemAndReportInconsistency(
+										"not enough public parking in scenario - introduce dummy parking to solve problem");
+							}
+							for (PC2Parking parking : collection) {
+								double score = parkingScoreManager.calcScore(parkingOperationRequestAttributes.destCoordinate,
+										parkingOperationRequestAttributes.arrivalTime,
+										parkingOperationRequestAttributes.parkingDurationInSeconds, parking,
+										parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.legIndex, false, parkingOperationRequestAttributes.actType);
+								if (parking instanceof OptimizableParking) {
+									
+									if (((OptimizableParking) parking).isBlueZone()) {
+										
+										if (parkingOperationRequestAttributes.parkingDurationInSeconds > 3600.0) {							
+											
+											// check if it is during the night when parking is unlimited
+											if ((parkingOperationRequestAttributes.arrivalTime > 19 * 3600.0 &&
+													parkingOperationRequestAttributes.arrivalTime + 
+													parkingOperationRequestAttributes.parkingDurationInSeconds < 33 * 3600.0)
+													|| (parkingOperationRequestAttributes.arrivalTime < 9 *3600.0 && parkingOperationRequestAttributes.arrivalTime + 
+															parkingOperationRequestAttributes.parkingDurationInSeconds < 9 * 3600.0)) {
+												queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));		
+												notFound = false;
+											}
+											
+										}
+										else {
+											queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
+											notFound = false;
+
+										}
+									}
+									else {
+										
+										if (parkingOperationRequestAttributes.parkingDurationInSeconds <= 3600.0 || parking.getGroupName().equals("garageParking")
+												|| ((parkingOperationRequestAttributes.arrivalTime > 19 * 3600.0 &&
+														parkingOperationRequestAttributes.arrivalTime + 
+														parkingOperationRequestAttributes.parkingDurationInSeconds < 33 * 3600.0)
+														|| (parkingOperationRequestAttributes.arrivalTime < 9 *3600.0 && parkingOperationRequestAttributes.arrivalTime + 
+																parkingOperationRequestAttributes.parkingDurationInSeconds < 9 * 3600.0))){ 
+											queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
+											notFound = false;
+										}
+									}
+								}
+								else {
+									
+									queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score)); // score made positive, so that priority queue works properly
+									notFound = false;
+
+								}			
+							}
+						}						
+					}					
+				}				
+				
+				if (selectedParking == null) {
+					SortableMapObject<PC2Parking> poll = queue.peek();
+					finalScore = poll.getWeight();
+					selectedParking = poll.getKey();
+					parkedVehicles.put(parkingOperationRequestAttributes.personId, selectedParking.getId());
+
+					// this tells the parking lot to decrease the number of
+					// available spaces:
+					parkVehicle(selectedParking);
+
 				}
+				// this puts the personId (!!!! yyyyyy) at the parking location:
+
+				
 			}
-			
 			else {
-				//no permits for public garage and blue zone, search for private if it exists
-				//TODO: check if the person has a permit for private parking
 				for (PPRestrictedToFacilities pp : privateParkingsRestrictedToFacilities
 						.get(parkingOperationRequestAttributes.facilityId)) {
 					if (pp.getAvailableParkingCapacity() > 0) {
@@ -305,74 +371,57 @@ public final class ParkingInfrastructureManager {
 					}
 				}
 				
-			}
-
-			if (!parkingFound && queue.isEmpty()) {
-				
-				//person has no permit and there is no private parking
-				//fall to other kinds of parking options
-				double distance = 500;
-				
-				boolean notFound = true;
-				while (notFound) {
-					
+				// if not found, search within distance of 300m:
+				double distance = 250;
+				if (!parkingFound) {
 					Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
-					distance *= 2;
-					if (distance > 100000000) {
-						// stop infinite loop
-						DebugLib.stopSystemAndReportInconsistency(
-								"not enough public parking in scenario - introduce dummy parking to solve problem");
+
+					while (collection.size() == 0) {
+						distance *= 2;
+						collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
+
+						if (distance > 100000000) {
+							// stop infinite loop
+							DebugLib.stopSystemAndReportInconsistency(
+									"not enough public parking in scenario - introduce dummy parking to solve problem");
+						}
+
 					}
+
+					// put parking that was found into a sorted queue:
+					PriorityQueue<SortableMapObject<PC2Parking>> queue = new PriorityQueue<SortableMapObject<PC2Parking>>();
 					for (PC2Parking parking : collection) {
 						double score = parkingScoreManager.calcScore(parkingOperationRequestAttributes.destCoordinate,
 								parkingOperationRequestAttributes.arrivalTime,
 								parkingOperationRequestAttributes.parkingDurationInSeconds, parking,
-								parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.legIndex, false, parkingOperationRequestAttributes.actType);
-						if (parking instanceof OptimizableParking) {
-							
-							if (((OptimizableParking) parking).isBlueZone()) {
-								
-								if (parkingOperationRequestAttributes.parkingDurationInSeconds > 3600.0) {							
-									
-									// check if it is during the night when parking is unlimited
-									if (parkingOperationRequestAttributes.arrivalTime > 19 * 3600.0 &&
-											parkingOperationRequestAttributes.arrivalTime + 
-											parkingOperationRequestAttributes.parkingDurationInSeconds < 33 * 3600.0) {
-										queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));		
-										notFound = false;
-									}
-									
-								}
-								else {
-									queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-									notFound = false;
-
-								}
-							}
-							else {
-								
-								//TODO: we need to check if the a person can park for the requested duration at this parking location
-								if (parkingOperationRequestAttributes.parkingDurationInSeconds <= 3600.0 || parking.getGroupName().equals("garageParking")){ 
-									queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-									notFound = false;
-								}
-							}
-						}
-						else {
-							
-							queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score)); // score made positive, so that priority queue works properly
-							notFound = false;
-
-						}
-	
+								parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.legIndex, 
+								false, parkingOperationRequestAttributes.actType);
+						queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score)); // score made positive, so that priority queue works properly
 					}
+
+					// TODO: should I make MNL only on top 5 here?
+
+					// select the best one from the queue:
+					SortableMapObject<PC2Parking> poll = queue.peek();
+					finalScore = poll.getWeight();
+					selectedParking = poll.getKey();					
+
+					// this puts the personId (!!!! yyyyyy) at the parking location:
+					parkedVehicles.put(parkingOperationRequestAttributes.personId, selectedParking.getId());
+
+					// this tells the parking lot to decrease the number of
+					// available spaces:
+					parkVehicle(selectedParking);
 				}
-			
+				
+				
+				
 			}
+			
 		}
+		
 		else {
-			//the agent is not parking at home
-			//permits are not used for the moment also for work
+			
 			for (PPRestrictedToFacilities pp : privateParkingsRestrictedToFacilities
 					.get(parkingOperationRequestAttributes.facilityId)) {
 				if (pp.getAvailableParkingCapacity() > 0) {
@@ -388,84 +437,50 @@ public final class ParkingInfrastructureManager {
 					selectedParking = pp;
 				}
 			}
+			
+			// if not found, search within distance of 300m:
+			double distance = 250;
 			if (!parkingFound) {
-				double distance = 300;
-				
-				boolean notFound = true;
-				while (notFound) {
-					
-					Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
+				Collection<PC2Parking> collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
+
+				while (collection.size() == 0) {
 					distance *= 2;
+					collection = getFilteredCollection(parkingOperationRequestAttributes, distance);
+
 					if (distance > 100000000) {
 						// stop infinite loop
 						DebugLib.stopSystemAndReportInconsistency(
 								"not enough public parking in scenario - introduce dummy parking to solve problem");
 					}
-					for (PC2Parking parking : collection) {
-						double score = parkingScoreManager.calcScore(parkingOperationRequestAttributes.destCoordinate,
-								parkingOperationRequestAttributes.arrivalTime,
-								parkingOperationRequestAttributes.parkingDurationInSeconds, parking,
-								parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.legIndex, false,
-								parkingOperationRequestAttributes.actType);
-						if (parking instanceof OptimizableParking) {
-							
-							if (((OptimizableParking) parking).isBlueZone()) {
-								
-								if (parkingOperationRequestAttributes.parkingDurationInSeconds > 3600.0) {							
-									
-									// check if it is during the night when parking is unlimited
-									if (parkingOperationRequestAttributes.arrivalTime > 19 * 3600.0 &&
-											parkingOperationRequestAttributes.arrivalTime + 
-											parkingOperationRequestAttributes.parkingDurationInSeconds < 33 * 3600.0) {
-										queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-										notFound = false;
-	
-									}
-									
-								}
-								else {
-									queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-									notFound = false;
-	
-								}
-							}
-							else {
-								
-								//TODO: we need to check if the a person can park for the requested duration at this parking location
-								if (parkingOperationRequestAttributes.parkingDurationInSeconds <= 3600.0 || parking.getGroupName().equals("garageParking")) {
-									queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-									notFound = false;
-								}
-							}
-						}
-						else {
-							queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score));
-							
-						}
-		
-					}
+
 				}
-			}
-			
+
+				// put parking that was found into a sorted queue:
+				PriorityQueue<SortableMapObject<PC2Parking>> queue = new PriorityQueue<SortableMapObject<PC2Parking>>();
+				for (PC2Parking parking : collection) {
+					double score = parkingScoreManager.calcScore(parkingOperationRequestAttributes.destCoordinate,
+							parkingOperationRequestAttributes.arrivalTime,
+							parkingOperationRequestAttributes.parkingDurationInSeconds, parking,
+							parkingOperationRequestAttributes.personId, parkingOperationRequestAttributes.legIndex, 
+							false, parkingOperationRequestAttributes.actType);
+					queue.add(new SortableMapObject<PC2Parking>(parking, -1.0 * score)); // score made positive, so that priority queue works properly
+				}
+
+				// TODO: should I make MNL only on top 5 here?
+
+				// select the best one from the queue:
+				SortableMapObject<PC2Parking> poll = queue.peek();
+				finalScore = poll.getWeight();
+				selectedParking = poll.getKey();					
+
+				// this puts the personId (!!!! yyyyyy) at the parking location:
+				parkedVehicles.put(parkingOperationRequestAttributes.personId, selectedParking.getId());
+
+				// this tells the parking lot to decrease the number of
+				// available spaces:
+				parkVehicle(selectedParking);
+			}				
 		}
-		
-
-		if (!parkingFound) {
-			// select the best one from the queue:
-			SortableMapObject<PC2Parking> poll = queue.peek();
-			finalScore = poll.getWeight();
-			selectedParking = poll.getKey();
-			parkedVehicles.put(parkingOperationRequestAttributes.personId, selectedParking.getId());
-
-			// this tells the parking lot to decrease the number of
-			// available spaces:
-			parkVehicle(selectedParking);
-		}		
-
-		// this puts the personId (!!!! yyyyyy) at the parking location:
-		//this is strange!
-		
-
 		try {
 			eventsManager.processEvent(new ParkingArrivalEvent(parkingOperationRequestAttributes.arrivalTime,
 					selectedParking.getId(), parkingOperationRequestAttributes.personId,

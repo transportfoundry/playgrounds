@@ -81,9 +81,9 @@ public class OptimizableParking extends PublicParking {
 		int endIndex = (int) ((arrivalTime + parkingDurationInSecond) / 3600.0);
 		double cost = 0.0;
 
-		if (endIndex > 47)
-			System.out.println(personId.toString() + " " + arrivalTime + " " + parkingDurationInSecond);
-		else {
+		//if (endIndex > 47)
+		//	System.out.println(personId.toString() + " " + arrivalTime + " " + parkingDurationInSecond);
+		//else {
 		if (parkingId.toString().contains("gp")) {
 			if (startIndex != endIndex){
 				cost = this.costPerEachHour[startIndex] * ((startIndex + 1) * 3600 - arrivalTime) / 3600.0;
@@ -148,7 +148,7 @@ public class OptimizableParking extends PublicParking {
 				
 			}
 		}	
-		}
+		//}
 		return cost;
 	}
 	
