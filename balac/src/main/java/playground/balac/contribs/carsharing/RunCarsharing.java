@@ -13,8 +13,11 @@ import org.matsim.contrib.carsharing.control.listeners.CarsharingListener;
 import org.matsim.contrib.carsharing.events.handlers.PersonArrivalDepartureHandler;
 import org.matsim.contrib.carsharing.manager.CarsharingManagerInterface;
 import org.matsim.contrib.carsharing.manager.CarsharingManagerNew;
+import org.matsim.contrib.carsharing.manager.demand.CurrentTotalDemand;
 import org.matsim.contrib.carsharing.manager.demand.CurrentTotalDemandImpl;
 import org.matsim.contrib.carsharing.manager.demand.DemandHandler;
+import org.matsim.contrib.carsharing.manager.demand.VehicleChoiceAgent;
+import org.matsim.contrib.carsharing.manager.demand.VehicleChoiceAgentImpl;
 import org.matsim.contrib.carsharing.manager.demand.membership.MembershipContainer;
 import org.matsim.contrib.carsharing.manager.demand.membership.MembershipReader;
 import org.matsim.contrib.carsharing.manager.routers.RouteCarsharingTrip;
@@ -49,6 +52,7 @@ import org.matsim.core.scenario.ScenarioUtils;
 import playground.balac.contribs.carsharing.coststructures.CostStructure1;
 import playground.balac.contribs.carsharing.coststructures.CostStructure2;
 import playground.balac.contribs.carsharing.coststructures.CostStructureTwoWay;
+import playground.balac.contribs.carsharing.demand.VehicleChoiceTechnologyPriceAgent;
 import playground.balac.contribs.carsharing.models.ChooseTheCompanyPriceBased;
 import playground.balac.contribs.carsharing.models.KeepTheVehicleModel;
 import playground.balac.contribs.carsharing.models.VehicleTypeChoice;
@@ -66,10 +70,11 @@ public class RunCarsharing {
 				 + "_" + args[1] + "_" + args[2]);		
 		
 		((GlobalConfigGroup)config.getModules().get("global")).setRandomSeed(Long.parseLong(args[1]));
-		for (StrategySettings s :((StrategyConfigGroup)config.getModules().get("strategy")).getStrategySettings()) {
+		
+		/*for (StrategySettings s :((StrategyConfigGroup)config.getModules().get("strategy")).getStrategySettings()) {
 			if (s.getStrategyName().equals("CarsharingSubtourModeChoiceStrategy"))
 					s.setWeight(Double.parseDouble(args[2]));
-		}		
+		}	*/	
 		
 		CarsharingUtils.addConfigModules(config);
 
@@ -79,9 +84,9 @@ public class RunCarsharing {
 		int i = 0;
 		for (Person person : sc.getPopulation().getPersons().values()) {
 			Boolean b = false;
-			if (i % 150 == 0)
+			if (i % 20 == 0)
 				b = true;
-			person.getAttributes().putAttribute("bulky", b);
+			person.getAttributes().putAttribute("technology", b);
 			i++;
 		}
 		installCarSharing(controler);
@@ -117,9 +122,9 @@ public class RunCarsharing {
 		final ChooseVehicleType chooseCehicleType = new VehicleTypeChoice();
 		final RouterProvider routerProvider = new RouterProviderImpl();
 		final CurrentTotalDemandImpl currentTotalDemand = new CurrentTotalDemandImpl(controler.getScenario().getNetwork());
-		final CarsharingManagerInterface carsharingManager = new CarsharingManagerNew();
 		final RouteCarsharingTrip routeCarsharingTrip = new RouteCarsharingTripImpl();
-		
+		final VehicleChoiceAgent vehicleChoiceAgent = new VehicleChoiceTechnologyPriceAgent();
+
 		//===adding carsharing objects on supply and demand infrastructure ===
 		
 		controler.addOverridingModule(new AbstractModule() {
@@ -131,14 +136,15 @@ public class RunCarsharing {
 				bind(ChooseTheCompany.class).toInstance(chooseCompany);
 				bind(ChooseVehicleType.class).toInstance(chooseCehicleType);
 				bind(RouterProvider.class).toInstance(routerProvider);
-				bind(CurrentTotalDemandImpl.class).toInstance(currentTotalDemand);
+				bind(CurrentTotalDemand.class).toInstance(currentTotalDemand);
 				bind(RouteCarsharingTrip.class).toInstance(routeCarsharingTrip);
 				bind(CostsCalculatorContainer.class).toInstance(costsCalculatorContainer);
 				bind(MembershipContainer.class).toInstance(memberships);
 			    bind(CarsharingSupplyInterface.class).toInstance(carsharingSupplyContainer);
-			    bind(CarsharingManagerInterface.class).toInstance(carsharingManager);
+			    bind(CarsharingManagerInterface.class).to(CarsharingManagerNew.class);
 			    bind(DemandHandler.class).asEagerSingleton();
 			    bind(ComputationTime.class).asEagerSingleton();
+			    bind(VehicleChoiceAgent.class).toInstance(vehicleChoiceAgent);
 
 			}			
 		});		
@@ -193,8 +199,8 @@ public class RunCarsharing {
 			if (s.equals("Mobility"))
 				costCalculations.put("freefloating", new CostStructure1());		
 			else {
-				costCalculations.put("freefloating", new CostStructure1());
-				costCalculations.put("twoway", new CostStructureTwoWay());
+				costCalculations.put("freefloating", new CostStructure2());
+				//costCalculations.put("twoway", new CostStructureTwoWay());
 
 			}
 			CompanyCosts companyCosts = new CompanyCosts(costCalculations);

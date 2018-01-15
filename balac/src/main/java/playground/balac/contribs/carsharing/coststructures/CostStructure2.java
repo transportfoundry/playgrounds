@@ -7,9 +7,9 @@ public class CostStructure2 implements CostCalculation{
 
 	private final static double betaTT = 1.0;
 	private final static double betaRentalTIme = 1.0;
-	private final static double scaleTOMatchCar = 4.0;
+	private final static double scaleTOMatchCar = 3.0;
 	
-	private final static double start = 3600.0 * 14.0;
+	private final static double start = 3600.0 * 18.0;
 	private final static double end = 3600.0 * 18.0;
 	
 	@Override
@@ -23,7 +23,7 @@ public class CostStructure2 implements CostCalculation{
 			reduction = 0.5;
 		
 		return reduction * CostStructure2.scaleTOMatchCar * 
-				(inVehicleTime /60.0 * 0.3 + (rentalTIme - inVehicleTime) / 60.0 * 0.15);
+				(inVehicleTime /60.0 * 0.32 + (rentalTIme - inVehicleTime) / 60.0 * 0.2);
 	}
 
 }

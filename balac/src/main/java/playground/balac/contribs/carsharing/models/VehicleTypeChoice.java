@@ -19,8 +19,8 @@ public class VehicleTypeChoice implements ChooseVehicleType {
 		Activity a = (Activity) plan.getPlanElements().get(index + 1);
 		
 		String type = a.getType();
-		
-		if (type.startsWith("secondary") && currentLeg.getMode().equals("freefloating")) {
+		return "car";		
+		/*if (type.startsWith("secondary") && currentLeg.getMode().equals("freefloating")) {
 			
 			if (((Boolean)plan.getPerson().getAttributes().getAttribute("bulky")))
 				return "transporter";
@@ -29,6 +29,6 @@ public class VehicleTypeChoice implements ChooseVehicleType {
 						
 		}
 		else
-			return "car";		
+			return "car";	*/	
 	}
 }
