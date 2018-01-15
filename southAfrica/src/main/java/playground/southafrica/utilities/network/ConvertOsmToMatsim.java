@@ -41,12 +41,16 @@ import playground.southafrica.utilities.Header;
 /**
  * Class to convert an OpenStreetMap *.osm file into a MATSim network.
  * The highway conversion defaults have been set to best represent the 
- * South African road configuration.
+ * South African road configuration.<br><br>
+ * 
+ * <b>This class was replaced with a free-standing repository based on 
+ * the <code>matsim-example-project</code>. 
  * 
  * @see <a href=http://wiki.openstreetmap.org/wiki/South_African_Tagging_Guidelines>South African tagging guidelines on <i>OpenStreetMap</i></a>
  * 
  * @author jwjoubert
  */
+@Deprecated
 public class ConvertOsmToMatsim {
 	final private static Logger LOG = Logger.getLogger(ConvertOsmToMatsim.class);
 	

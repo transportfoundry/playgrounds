@@ -25,9 +25,9 @@ import org.matsim.core.utils.misc.Counter;
 import org.matsim.facilities.ActivityFacilities;
 import org.matsim.facilities.ActivityFacility;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 import org.opengis.feature.simple.SimpleFeature;
 
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.census2011.containers.MainDwellingType2011;
 import playground.southafrica.population.utilities.ComprehensivePopulationReader;
 import playground.southafrica.utilities.Header;

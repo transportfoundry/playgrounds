@@ -9,7 +9,6 @@ import java.util.Observable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.matsim.vehicles.VehicleType;
 import others.sergioo.util.geometry.Line2D;
 import others.sergioo.util.geometry.Point2D;
 import others.sergioo.visUtils.PointLines;
@@ -69,7 +68,7 @@ public class Road extends Observable implements PointLines{
 				return (-b+Math.sqrt(b*b+2*r*area))/r;
 		}
 	}
-	private static class Mode {
+	public static class Mode {
 		double length;
 		double width;
 		double speed;
@@ -127,9 +126,8 @@ public class Road extends Observable implements PointLines{
 	private double length;
 	private double currentTime;
 	
-	public Road(TypeRoad type, Collection<VehicleType> vehicleTypes, double length, double linkSpeed, Collection<Vehicle> vehicles) throws Exception {
-		for(VehicleType vehicleType: vehicleTypes)
-			modes.put(vehicleType.getId().toString(), new Road.Mode(vehicleType.getLength(), vehicleType.getWidth(), vehicleType.getMaximumVelocity()));
+	public Road(TypeRoad type, Map<String, Mode> modes, double length, double linkSpeed, Collection<Vehicle> vehicles) throws Exception {
+		this.modes = modes;
 		length/=5/2;
 		this.length = length;
 		double maxWidth = 0, sumWidth = 0;

@@ -22,9 +22,6 @@ package playground.gregor.sim2d_v4.debugger.eventsbaseddebugger;
 
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
-import playground.gregor.casim.events.CASimAgentConstructEvent;
-import playground.gregor.casim.events.CASimAgentConstructEventHandler;
-import playground.gregor.casim.simulation.physics.CAMoveableEntity;
 import playground.gregor.sim2d_v4.events.XYVxVyEventImpl;
 import playground.gregor.sim2d_v4.events.XYVxVyEventsHandler;
 import playground.gregor.sim2d_v4.events.debug.*;
@@ -34,8 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EventBasedVisDebuggerEngine implements
-        CASimAgentConstructEventHandler, XYVxVyEventsHandler,
+public class EventBasedVisDebuggerEngine implements XYVxVyEventsHandler,
         LineEventHandler, ForceReDrawEventHandler,
         RectEventHandler, CircleEventHandler, TextEventHandler, PolygonEventHandler {
 
@@ -227,52 +223,7 @@ public class EventBasedVisDebuggerEngine implements
         this.nrAgents = 0;
     }
 
-    @Override
-    public void handleEvent(CASimAgentConstructEvent e) {
-        CAMoveableEntity a = e.getCAAgent();
-        CircleProperty cp = new CircleProperty();
-        cp.rr = (float) (0.5 / 5.091);
-        int nr = a.getId().toString().hashCode() % 100;
-        int color = (nr / 10) % 3;
-        // if (Integer.parseInt(a.getId().toString()) < 0) {
-        // color = 1;
-        // } else {
-        // color = 2;
-        // }
-        if (color == 1) {
-            cp.r = 255;
-            cp.g = 255 - nr;
-            cp.b = 0;
-            cp.a = 255;
-        } else if (color == 2) {
-            cp.r = nr - nr;
-            cp.g = 0;
-            cp.b = 255;
-            cp.a = 255;
-        } else {
-            cp.r = 0;
-            cp.g = 255;
-            cp.b = 255 - nr;
-            cp.a = 255;
-        }
-
-        if (a.getId().toString().startsWith("g")) {
-            cp.r = 0;
-            cp.g = 255 - nr;
-            cp.b = 0;
-        } else if (a.getId().toString().startsWith("b")) {
-            cp.r = 0;
-            cp.g = 0;
-            cp.b = 255 - nr;
-        } else if (a.getId().toString().startsWith("r")) {
-            cp.r = 255 - nr;
-            cp.g = 0;
-            cp.b = 0;
-        }
-
-        this.circleProperties.put(a.getId(), cp);
-
-    }
+  
 
     @Override
     public void handleEvent(LineEvent e) {

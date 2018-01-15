@@ -33,6 +33,8 @@ import org.apache.log4j.Logger;
  *
  * @author jwjoubert
  */
+@Deprecated
+/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 public enum School2011 {
 	None, PreSchool, School, Tertiary, AdultEducation, HomeSchooling, Unknown, 
 	Unspecified, NotApplicable;

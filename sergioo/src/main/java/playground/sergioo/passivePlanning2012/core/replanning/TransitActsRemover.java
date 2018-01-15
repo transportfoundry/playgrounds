@@ -40,7 +40,7 @@ import org.matsim.pt.PtConstants;
  * following those activities. In addition, all legs with mode "transit_walk"
  * are set to mode "pt" to be routed again with the transit. 
  * 
- * @see PtConstants#TRANSIT_ACTIVITY_TYPE
+ * @see PtConstants
  * 
  * @author mrieser
  */

@@ -48,13 +48,13 @@ import org.matsim.core.utils.misc.Counter;
 import org.matsim.households.Household;
 import org.matsim.utils.objectattributes.ObjectAttributes;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 import playground.southafrica.population.capeTownTravelSurvey.PersonEnums;
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.census2011.containers.Income2011;
 import playground.southafrica.population.demographics.SaDemographicsAge;
 import playground.southafrica.population.demographics.SaDemographicsEmployment;
@@ -73,8 +73,12 @@ import playground.southafrica.utilities.RandomPermutation;
  * changed to that of the travel diary. If that is a problem, you need to 
  * manually transform the coordinates outside of this class.
  *
+ * This should be replaced with org.matsim.scenarios.capeTown.travelDiary2013
+ * in the matsim-data repository.
+ *
  * @author jwjoubert
  */
+@Deprecated
 public class SurveyPlanPicker {
 	private final static Logger LOG = Logger.getLogger(SurveyPlanPicker.class);
 	private final static int NUMBER_OF_NEIGHBOURS = 20;

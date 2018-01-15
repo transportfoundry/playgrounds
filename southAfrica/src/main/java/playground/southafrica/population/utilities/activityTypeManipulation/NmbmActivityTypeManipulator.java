@@ -23,9 +23,12 @@ import playground.southafrica.utilities.Header;
 
 /**
  *  
+ * This class is replaced by org.matsim.population.utilities.activityTypeManipulation.ActivityTypeManipulator
+ * in the matsim-data repository. 
  *
  * @author jwjoubert
  */
+@Deprecated
 public class NmbmActivityTypeManipulator extends ActivityTypeManipulator {
 	private Config config;
 

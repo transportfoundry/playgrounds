@@ -7,9 +7,10 @@ import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
-import org.matsim.core.mobsim.qsim.qnetsimengine.ConfigurableQNetworkFactory;
-import org.matsim.core.mobsim.qsim.qnetsimengine.QNetworkFactory;
 import org.matsim.core.scenario.ScenarioUtils;
+
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.ConfigurableQNetworkFactory;
+import playground.sergioo.mixedTraffic2017.qsim.qnetsimengine.QNetworkFactory;
 
 public class PrepareScenario {
 

@@ -26,8 +26,8 @@ import org.matsim.households.HouseholdsImpl;
 import org.matsim.households.HouseholdsWriterV10;
 import org.matsim.utils.objectattributes.ObjectAttributes;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.census2011.containers.Gender2011;
 import playground.southafrica.population.census2011.containers.HousingType2011;
 import playground.southafrica.population.census2011.containers.Income2011;

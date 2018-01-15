@@ -19,12 +19,13 @@
  * *********************************************************************** */
 package playground.johannes.studies.sbsurvey.io;
 
-import net.opengis.kml._2.ObjectFactory;
-import net.opengis.kml._2.PlacemarkType;
-import net.opengis.kml._2.TimeSpanType;
+import java.util.Map;
+
 import org.matsim.contrib.socnetgen.sna.graph.spatial.io.KMLObjectDetail;
 
-import java.util.Map;
+import net.opengis.kml.v_2_2_0.ObjectFactory;
+import net.opengis.kml.v_2_2_0.PlacemarkType;
+import net.opengis.kml.v_2_2_0.TimeSpanType;
 
 /**
  * @author illenberger

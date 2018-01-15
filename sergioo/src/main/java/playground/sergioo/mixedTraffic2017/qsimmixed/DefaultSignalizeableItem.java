@@ -92,7 +92,18 @@ public final class DefaultSignalizeableItem implements SignalizeableItem {
 		}
 		return checkGreen(this.toLinkIdSignalStates.get(toLinkId));
 	}
-	
+
+	public boolean hasGreenForAllToLinks() {
+		return linkGreen;
+	}
+
+	public boolean hasGreenForToLink(Id<Link> toLinkId){
+		if (this.allToLinksState != null) {
+			return checkGreen(this.allToLinksState);
+		}
+		return checkGreen(this.toLinkIdSignalStates.get(toLinkId));
+	}
+
 	@Override
 	public void setSignalized(boolean isSignalized) {
 		//nothing to do

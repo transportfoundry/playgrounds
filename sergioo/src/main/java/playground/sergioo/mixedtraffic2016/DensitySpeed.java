@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Created by sergioo on 1/2/17.
@@ -58,8 +59,8 @@ public class DensitySpeed implements LinkEnterEventHandler, LinkLeaveEventHandle
             this.numBuffer = numBuffer;
         }
         private void checkBuffer(double time, double speed, double length) {
-            if(speed*(time-inTime)>=length) {
-                for(VehicleInfo vehicleInfo:vehicles.values())
+            if(!inBuffer && speed*(time-inTime)>=length) {
+            	for(VehicleInfo vehicleInfo:vehicles.values())
                     if(vehicleInfo.inBuffer)
                         numBufferB++;
                 inBuffer = true;
@@ -71,7 +72,7 @@ public class DensitySpeed implements LinkEnterEventHandler, LinkLeaveEventHandle
     private final Link link;
     private Map<Id<Vehicle>, String> modeVehicles = new HashMap<>();
     private static Map<Id<Vehicle>, VehicleInfo> vehicles = new HashMap<>();
-    private Collection<double[]> points = new ArrayList<>();
+    private Map<String, Collection<double[]>> points = new HashMap<>();
 
     public DensitySpeed(Collection<VehicleType> vehicleTypes, Link link) {
         for(VehicleType vehicleType:vehicleTypes)
@@ -80,17 +81,7 @@ public class DensitySpeed implements LinkEnterEventHandler, LinkLeaveEventHandle
     }
     @Override
     public void handleEvent(LinkEnterEvent event) {
-        for (VehicleInfo vehicleInfo : vehicles.values())
-            vehicleInfo.checkBuffer(event.getTime(), modes.get(vehicleInfo.mode).speed, link.getLength());
-        if (event.getLinkId().equals(link.getId())) {
-            VehicleInfo vehicleInfo = vehicles.remove(event.getVehicleId());
-            points.add(new double[]{link.getLength()/(event.getTime() - vehicleInfo.inTime), vehicleInfo.total, vehicleInfo.numBuffer, vehicleInfo.numBufferB});
-        }
-    }
-
-    @Override
-    public void handleEvent(LinkLeaveEvent event){
-        for(VehicleInfo vehicleInfo:vehicles.values())
+    	for(VehicleInfo vehicleInfo:vehicles.values())
             vehicleInfo.checkBuffer(event.getTime(), modes.get(vehicleInfo.mode).speed, link.getLength());
         if(event.getLinkId().equals(link.getId())) {
             int numBuffer = 0;
@@ -98,6 +89,21 @@ public class DensitySpeed implements LinkEnterEventHandler, LinkLeaveEventHandle
                 if(vehicleInfo.inBuffer)
                     numBuffer++;
             vehicles.put(event.getVehicleId(), new VehicleInfo(event.getTime(), modeVehicles.get(event.getVehicleId()), vehicles.size(), numBuffer));
+        }
+    }
+
+    @Override
+    public void handleEvent(LinkLeaveEvent event){
+    	for (VehicleInfo vehicleInfo : vehicles.values())
+            vehicleInfo.checkBuffer(event.getTime(), modes.get(vehicleInfo.mode).speed, link.getLength());
+        if (event.getLinkId().equals(link.getId())) {
+            VehicleInfo vehicleInfo = vehicles.remove(event.getVehicleId());
+            Collection<double[]> pointsM = points.get(vehicleInfo.mode);
+            if(pointsM==null) {
+            	pointsM = new ArrayList<>();
+            	points.put(vehicleInfo.mode, pointsM);
+            }
+            pointsM.add(new double[]{link.getLength()/(event.getTime() - vehicleInfo.inTime), vehicleInfo.total, vehicleInfo.numBuffer, vehicleInfo.numBufferB});
         }
     }
 
@@ -125,12 +131,14 @@ public class DensitySpeed implements LinkEnterEventHandler, LinkLeaveEventHandle
         events.addHandler(densitySpeed);
         new MatsimEventsReader(events).readFile(args[2]);
         PrintWriter writer = new PrintWriter(args[3]);
-        for (double[] point : densitySpeed.points) {
-            writer.print(point[0]);
-            for(int i=1; i<point.length; i++)
-                writer.print(","+point[i]);
-            writer.println();
-        }
+        writer.println("MODE,SPEED,TOTAL,BUFFER,BUFFERB");
+        for(Entry<String, Collection<double[]>> pointsM:densitySpeed.points.entrySet())
+	        for (double[] point : pointsM.getValue()) {
+	            writer.print(pointsM.getKey());
+	            for(int i=0; i<point.length; i++)
+	                writer.print(","+point[i]);
+	            writer.println();
+	        }
         writer.close();
     }
 

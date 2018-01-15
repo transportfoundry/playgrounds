@@ -24,8 +24,12 @@ import playground.southafrica.utilities.Header;
  * Class to adapt the activity types based on the R-analysis of the activity 
  * durations.
  * 
+ * This class is replaced by org.matsim.population.utilities.activityTypeManipulation.ActivityTypeManipulator
+ * in the matsim-data repository. 
+ 
  * @author jwjoubert
  */
+@Deprecated
 public class CapeTownActivityTypeManipulator_2014 extends ActivityTypeManipulator {
 
 	public CapeTownActivityTypeManipulator_2014() {

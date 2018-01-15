@@ -37,7 +37,7 @@ import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.framework.MobsimTimer;
 import org.matsim.core.mobsim.framework.listeners.MobsimListener;
 import org.matsim.core.mobsim.qsim.InternalInterface;
-import org.matsim.core.mobsim.qsim.TeleportationEngine;
+import org.matsim.core.mobsim.qsim.DefaultTeleportationEngine;
 import org.matsim.core.mobsim.qsim.interfaces.ActivityHandler;
 import org.matsim.core.mobsim.qsim.interfaces.DepartureHandler;
 import org.matsim.core.mobsim.qsim.interfaces.MobsimEngine;
@@ -101,7 +101,7 @@ public final class QSim implements VisMobsim, Netsim {
 
 	private MobsimTimer simTimer;
 
-	private TeleportationEngine teleportationEngine;
+	private DefaultTeleportationEngine teleportationEngine;
 
 	private WithinDayEngine withindayEngine = null; 
 
@@ -438,8 +438,8 @@ public final class QSim implements VisMobsim, Netsim {
 		if (mobsimEngine instanceof PTQNetsimEngine) {
 			this.netEngine = (PTQNetsimEngine) mobsimEngine;
 		}
-		if (mobsimEngine instanceof TeleportationEngine) {
-			this.teleportationEngine = (TeleportationEngine) mobsimEngine;
+		if (mobsimEngine instanceof DefaultTeleportationEngine) {
+			this.teleportationEngine = (DefaultTeleportationEngine) mobsimEngine;
 		}
 		if (mobsimEngine instanceof WithinDayEngine) {
 			this.withindayEngine = (WithinDayEngine) mobsimEngine;

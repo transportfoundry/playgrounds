@@ -62,7 +62,7 @@ public class MyCiTiVehicles {
 	}
 	
 	public enum Type{
-		MyCiTi_9m, MyCiTi_12m, MyCiTi_18m; 
+		MyCiTi_9m, MyCiTi_12m, MyCiTi_18m, MyCiTi_dummy; 
 		
 		public VehicleType getVehicleType(){
 			double length = 0.0;
@@ -82,6 +82,11 @@ public class MyCiTiVehicles {
 				length = 18.0;
 				capacity.setSeats(59);
 				capacity.setStandingRoom(52);
+				break;
+			case MyCiTi_dummy:
+				length = 18.0;
+				capacity.setSeats(101);
+				capacity.setStandingRoom(101);
 				break;
 			}
 			VehicleType type = new VehicleTypeImpl(Id.create(this.name(), VehicleType.class));

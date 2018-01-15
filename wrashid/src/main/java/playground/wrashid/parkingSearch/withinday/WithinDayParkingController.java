@@ -70,7 +70,7 @@ public class WithinDayParkingController extends WithinDayController implements R
 		throw new RuntimeException();
 //		this.initIdentifiers();
 //
-//		RoutingContext routingContext = new RoutingContextImpl(this.getTravelDisutilityFactory().createTravelDisutility(this.getTravelTimeCollector(), this.getConfig().planCalcScore()), this.getTravelTimeCollector());
+//		RoutingContext routingContext = new RoutingContextImpl(this.getTravelDisutilityFactory().createTravelDisutility(this.getWithinDayTravelTime(), this.getConfig().planCalcScore()), this.getWithinDayTravelTime());
 //
 //		this.randomSearchReplannerFactory = new RandomSearchReplannerFactory(this.getWithinDayEngine(), this.getScenario(), parkingAgentsTracker,
 //				this.getWithinDayTripRouterFactory(), routingContext);
@@ -86,7 +86,7 @@ public class WithinDayParkingController extends WithinDayController implements R
 //        new WorldConnectLocations(this.getConfig()).connectFacilitiesWithLinks(getScenario().getActivityFacilities(), (NetworkImpl) getScenario().getNetwork());
 //		
 //		super.initWithinDayEngine(numReplanningThreads);
-//		super.createAndInitTravelTimeCollector();
+//		super.createAndInitWithinDayTravelTime();
 //		super.createAndInitLinkReplanningMap();
 //		
 //// ensure that all agents' plans have valid mode chains
@@ -115,7 +115,7 @@ public class WithinDayParkingController extends WithinDayController implements R
 //		this.getFixedOrderSimulationListener().addSimulationListener(this.parkingAgentsTracker);
 //		this.getEvents().addHandler(this.parkingAgentsTracker);
 //		
-//		RoutingContext routingContext = new RoutingContextImpl(this.getTravelDisutilityFactory(), this.getTravelTimeCollector(), this.getConfig().planCalcScore());
+//		RoutingContext routingContext = new RoutingContextImpl(this.getTravelDisutilityFactory(), this.getWithinDayTravelTime(), this.getConfig().planCalcScore());
 //		
 //		insertParkingActivities = new InsertParkingActivities(getScenario(), this.getWithinDayTripRouterFactory().get(routingContext), parkingInfrastructure);
 //		

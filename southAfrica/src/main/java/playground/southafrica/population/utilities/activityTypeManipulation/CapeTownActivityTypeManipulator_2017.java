@@ -26,8 +26,12 @@ import playground.southafrica.utilities.Header;
  * 
  * FIXME Which R script?
  * 
+ * This class is replaced by org.matsim.population.utilities.activityTypeManipulation.ActivityTypeManipulator
+ * in the matsim-data repository. 
+
  * @author jwjoubert
  */
+@Deprecated
 public class CapeTownActivityTypeManipulator_2017 extends ActivityTypeManipulator {
 
 	public CapeTownActivityTypeManipulator_2017() {

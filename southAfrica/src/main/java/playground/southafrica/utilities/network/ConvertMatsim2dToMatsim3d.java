@@ -41,10 +41,14 @@ import playground.southafrica.utilities.coord3D.Utils3D;
 
 /**
  * Class to convert the basic 2D road network (typically derived from 
- * OpenStreetMap) into a 3D road network.
+ * OpenStreetMap) into a 3D road network.<br><br>
+ * 
+  * <b>This class was replaced with a free-standing repository based on 
+ * the <code>matsim-example-project</code>. 
  *  
  * @author jwjoubert
  */
+@Deprecated
 public class ConvertMatsim2dToMatsim3d {
 	final private static Logger LOG = Logger.getLogger(ConvertMatsim2dToMatsim3d.class);
 

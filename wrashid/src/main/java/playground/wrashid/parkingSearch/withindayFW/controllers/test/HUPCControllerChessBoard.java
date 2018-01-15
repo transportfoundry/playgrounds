@@ -62,14 +62,14 @@ public class HUPCControllerChessBoard extends WithinDayParkingController  {
 		parkingAgentsTracker.setParkingStrategyManager(parkingStrategyManager);
 
 		// create a copy of the MultiModalTravelTimeWrapperFactory and set the
-		// TravelTimeCollector for car mode
+		// WithinDayTravelTime for car mode
 
 		Map<String, TravelTime> travelTimes = new HashMap<String, TravelTime>();
 		travelTimes.put(TransportMode.walk, new WalkTravelTime(controler.getConfig().plansCalcRoute()));
 		travelTimes.put(TransportMode.bike, new BikeTravelTime(controler.getConfig().plansCalcRoute()));
 		travelTimes.put(TransportMode.ride, new UnknownTravelTime(TransportMode.ride, controler.getConfig().plansCalcRoute()));
 		travelTimes.put(TransportMode.pt, new UnknownTravelTime(TransportMode.pt, controler.getConfig().plansCalcRoute()));
-		travelTimes.put(TransportMode.car, super.getTravelTimeCollector());
+		travelTimes.put(TransportMode.car, super.getWithinDayTravelTime());
 
 		TravelDisutilityFactory costFactory = new OnlyTimeDependentTravelDisutilityFactory();
 

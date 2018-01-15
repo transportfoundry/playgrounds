@@ -65,7 +65,7 @@ public class HUPCAndRandomControllerChessBoard extends WithinDayParkingControlle
 		parkingAgentsTracker.setParkingStrategyManager(parkingStrategyManager);
 
 		// create a copy of the MultiModalTravelTimeWrapperFactory and set the
-		// TravelTimeCollector for car mode
+		// WithinDayTravelTime for car mode
 		
 		Map<String, TravelTime> travelTimes = new HashMap<String, TravelTime>();
 		travelTimes.put(TransportMode.walk, new WalkTravelTime(controler.getConfig().plansCalcRoute()));
@@ -73,7 +73,7 @@ public class HUPCAndRandomControllerChessBoard extends WithinDayParkingControlle
 		travelTimes.put(TransportMode.ride, new UnknownTravelTime(TransportMode.ride, controler.getConfig().plansCalcRoute()));
 		travelTimes.put(TransportMode.pt, new UnknownTravelTime(TransportMode.pt, controler.getConfig().plansCalcRoute()));
 
-		// travelTimes.put(TransportMode.car, super.getTravelTimeCollector());
+		// travelTimes.put(TransportMode.car, super.getWithinDayTravelTime());
 		// Only the "non-simulated" modes handled by the multimodal extension should go in there.
 
 		controler.addOverridingModule(new AbstractModule() {

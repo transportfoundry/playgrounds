@@ -54,8 +54,8 @@ import org.matsim.facilities.FacilitiesUtils;
 import org.matsim.facilities.FacilitiesWriter;
 import org.matsim.households.Household;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.utilities.ComprehensivePopulationReader;
 import playground.southafrica.utilities.FileUtils;
 import playground.southafrica.utilities.Header;
@@ -65,9 +65,13 @@ import playground.southafrica.utilities.Header;
  * adjusts each activity's location by considering the leg's distance, and the
  * location of actual parsed activity facilities (OpenStreetMap, Cape Town 
  * landuse, or Cape Town's informal settlements).
+ * 
+ * NOTE: This class is replaced by the org.matsim.scenarios.capeTown in the
+ * matsim-data repository.
  *  
  * @author jwjoubert
  */
+@Deprecated
 public class ERAfricaActivityLocationAdjuster {
 	final private static Logger LOG = Logger.getLogger(ERAfricaActivityLocationAdjuster.class);
 	private Scenario sc;

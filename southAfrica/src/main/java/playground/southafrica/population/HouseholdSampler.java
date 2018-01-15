@@ -39,9 +39,9 @@ import org.matsim.households.HouseholdsReaderV10;
 import org.matsim.households.HouseholdsWriterV10;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlReader;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributeconverters.CoordConverter;
 
 import playground.southafrica.population.algorithms.HouseholdSamplerAlgorithm;
-import playground.southafrica.population.census2011.attributeConverters.CoordConverter;
 import playground.southafrica.population.utilities.ComprehensivePopulationReader;
 import playground.southafrica.utilities.Header;
 

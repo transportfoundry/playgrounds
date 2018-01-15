@@ -28,11 +28,13 @@ public class IpfWriter2011 {
 	/**
 	 * @param args
 	 */
+	@Deprecated
+	/* Relocated to South Africa'a matsim-data project (Jan 2018). */
 	public static void main(String[] args) {
 		Header.printHeader(IpfWriter2011.class.toString(), args);
 		String inputFolder = args[0];
 		String outputFile = args[1];
-		
+
 		ComprehensivePopulationReader cr = new ComprehensivePopulationReader();
 		cr.parse(inputFolder);
 		Population population = cr.getScenario().getPopulation();
@@ -40,13 +42,13 @@ public class IpfWriter2011 {
 		ObjectAttributes personAttributes = cr.getScenario().getPopulation().getPersonAttributes();
 		Households households = cr.getScenario().getHouseholds();
 		ObjectAttributes householdAttributes = cr.getScenario().getHouseholds().getHouseholdAttributes();
-		
+
 		BufferedWriter bw = IOUtils.getBufferedWriter(outputFile);
 		try{
 			bw.write(String.format("HHNR\tPNR\tHHS\tHT\tMDT\tPOP\tINC\tPNRHH\tAGE\tGEN\tREL\tEMPL\tSCH\n"));
 			int personNumber = 1;
 			for(Id<Person> personId : population.getPersons().keySet()){
-				
+
 				Id<Household> householdId = Id.create(personId.toString().split("_")[0], Household.class);
 
 				/* Only add the person if the household income class is known. */
@@ -54,7 +56,7 @@ public class IpfWriter2011 {
 
 				if(income != Income2011.Unspecified && income != Income2011.NotApplicable){
 					int incomeCode = Income2011.getCode(income);
-					
+
 					/* Household id. */
 					bw.write(householdId.toString());
 					bw.write("\t");

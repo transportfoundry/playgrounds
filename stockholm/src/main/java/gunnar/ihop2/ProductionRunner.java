@@ -39,8 +39,7 @@ public class ProductionRunner {
 		final String matsimNetworkFile = "./ihop2-data/network-output/network.xml";
 		final String matsimFullNetworkFile = "./ihop2-data/network-output/network-full.xml";
 		final String linkAttributesFile = "./ihop2-data/network-output/link-attributes.xml";
-		final String matsimLanesFile11 = "./ihop2-data/network-output/lanes11.xml";
-		final String matsimLanesFile20 = "./ihop2-data/network-output/lanes20.xml";
+		final String matsimLanesFile = "./ihop2-data/network-output/lanes.xml";
 		final String matsimTollFile = "./ihop2-data/network-output/toll.xml";
 
 		final double populationSample = 0.01;
@@ -76,7 +75,7 @@ public class ProductionRunner {
 					nodesFile, linksFile, segmentsFile, lanesFile,
 					laneConnectorsFile, matsimNetworkFile,
 					matsimFullNetworkFile, linkAttributesFile,
-					matsimLanesFile11, matsimLanesFile20, matsimTollFile);
+					matsimLanesFile, matsimTollFile);
 			tm2MATSim.run();
 		}
 
@@ -114,7 +113,7 @@ public class ProductionRunner {
 							OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
 
 			if (useLanes) {
-				config.network().setLaneDefinitionsFile(matsimLanesFile20);
+				config.network().setLaneDefinitionsFile(matsimLanesFile);
 				config.qsim().setUseLanes(true);
 				config.travelTimeCalculator()
 						.setCalculateLinkToLinkTravelTimes(true);

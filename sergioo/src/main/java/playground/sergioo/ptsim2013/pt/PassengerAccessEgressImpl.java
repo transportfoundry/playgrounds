@@ -110,7 +110,7 @@ class PassengerAccessEgressImpl implements PassengerAccessEgress {
 	private List<PTPassengerAgent> findPassengersEntering(TransitRoute transitRoute, TransitLine transitLine, TransitVehicle vehicle, 
 			final TransitStopFacility stop, List<TransitRouteStop> stopsToCome, int freeCapacity, double now) {
 		ArrayList<PTPassengerAgent> passengersEntering = new ArrayList<PTPassengerAgent>();
-		for (PTPassengerAgent agent : this.agentTracker.getAgentsAtStop(stop.getId())) {
+		for (PTPassengerAgent agent : this.agentTracker.getAgentsAtFacility(stop.getId())) {
 			if ( !this.isGeneratingDeniedBoardingEvents ) {
 				if (freeCapacity == 0) {
 					break;
