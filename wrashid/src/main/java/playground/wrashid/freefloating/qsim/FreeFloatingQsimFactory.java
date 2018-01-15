@@ -1,14 +1,13 @@
 package playground.wrashid.freefloating.qsim;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
-import org.matsim.contrib.parking.parkingChoice.carsharing.ParkingCoordInfo;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.groups.QSimConfigGroup;
 import org.matsim.core.mobsim.qsim.ActivityEngine;
+import org.matsim.core.mobsim.qsim.DefaultTeleportationEngine;
 import org.matsim.core.mobsim.qsim.QSim;
 import org.matsim.core.mobsim.qsim.TeleportationEngine;
 import org.matsim.core.mobsim.qsim.agents.AgentFactory;
@@ -58,7 +57,7 @@ public class FreeFloatingQsimFactory implements Provider<Netsim>{
 
         QNetsimEngineModule.configure(qSim);
 		
-		TeleportationEngine teleportationEngine = new TeleportationEngine(sc, eventsManager);
+		TeleportationEngine teleportationEngine = new DefaultTeleportationEngine(sc, eventsManager);
 		qSim.addMobsimEngine(teleportationEngine);
 				
 		AgentFactory agentFactory = null;			
