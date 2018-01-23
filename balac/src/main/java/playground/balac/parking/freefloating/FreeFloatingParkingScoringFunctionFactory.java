@@ -5,7 +5,7 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
-import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingScoreManager;
+import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingScore;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingScoringFunction;
 import org.matsim.core.scoring.ScoringFunction;
 import org.matsim.core.scoring.ScoringFunctionFactory;
@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 
 public class FreeFloatingParkingScoringFunctionFactory implements ScoringFunctionFactory{
 
-	private ParkingScoreManager parkingScoreManager;
+	private ParkingScore parkingScoreManager;
 	private Scenario scenario;
 	private ScoringParametersForPerson parameters;
 
@@ -31,7 +31,7 @@ public class FreeFloatingParkingScoringFunctionFactory implements ScoringFunctio
 
 	@Inject
 	public FreeFloatingParkingScoringFunctionFactory(
-			Scenario scenario, ParkingScoreManager parkingScoreManager) {
+			Scenario scenario, ParkingScore parkingScoreManager) {
 		this.scenario = scenario;
 		this.parkingScoreManager = parkingScoreManager;
 		this.parameters = new SubpopulationScoringParameters( scenario );

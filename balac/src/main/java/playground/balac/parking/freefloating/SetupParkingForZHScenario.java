@@ -32,8 +32,10 @@ import org.matsim.contrib.parking.parkingchoice.PC2.infrastructure.PPRestrictedT
 import org.matsim.contrib.parking.parkingchoice.PC2.infrastructure.PublicParking;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingBetas;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingCostModel;
+import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingScore;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingScoreManager;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.RandomErrorTermManager;
+import org.matsim.contrib.parking.parkingchoice.PC2.simulation.ParkingInfrastructure;
 import org.matsim.contrib.parking.parkingchoice.PC2.simulation.ParkingInfrastructureManager;
 import org.matsim.contrib.parking.parkingchoice.lib.obj.DoubleValueHashMap;
 import org.matsim.core.config.Config;
@@ -61,7 +63,7 @@ public class SetupParkingForZHScenario {
 		
 		LinkedList<PParking> parkings = getParking(config, baseDir);
 	
-		ParkingScoreManager parkingScoreManager = prepareParkingScoreManager(parkingModule, parkings);
+		ParkingScore parkingScoreManager = prepareParkingScoreManager(parkingModule, parkings);
 		
 //		EventsManager events = EventsUtils.createEventsManager();
 //		EventWriterXML eventsWriter = new EventWriterXML("c:\\tmp\\events.xml.gz");
@@ -70,7 +72,7 @@ public class SetupParkingForZHScenario {
 //		events.resetHandlers(0);
 //		eventsWriter.init("c:\\tmp\\events.xml.gz");
 		
-		ParkingInfrastructureManager pim=new ParkingInfrastructureManager(parkingScoreManager,null);
+		ParkingInfrastructure pim=new ParkingInfrastructureManager(parkingScoreManager,null);
 		
 		ParkingCostModel pcm=new ParkingCostModelZH(config,parkings);
 		LinkedList<PublicParking> publicParkings=new LinkedList<PublicParking>();
@@ -121,9 +123,9 @@ public class SetupParkingForZHScenario {
 		parkingModule.getControler().setScoringFunctionFactory(new FreeFloatingParkingScoringFunctionFactory (parkingModule.getControler().getScenario() ,parkingModule.getParkingScoreManager()));
 	}
 	
-	public static ParkingScoreManager prepareParkingScoreManager(ParkingModuleWithFFCarSharingZH parkingModule, LinkedList<PParking> parkings) {
+	public static ParkingScore prepareParkingScoreManager(ParkingModuleWithFFCarSharingZH parkingModule, LinkedList<PParking> parkings) {
 		MatsimServices controler=parkingModule.getControler();
-		ParkingScoreManager parkingScoreManager = new ParkingScoreManager(getWalkTravelTime(parkingModule.getControler()), controler.getScenario() );
+		ParkingScore parkingScoreManager = new ParkingScoreManager(getWalkTravelTime(parkingModule.getControler()), controler.getScenario() );
 
 
         ParkingBetas parkingBetas=new ParkingBetas(getHouseHoldIncomeCantonZH(parkingModule.getControler().getScenario().getPopulation()));
