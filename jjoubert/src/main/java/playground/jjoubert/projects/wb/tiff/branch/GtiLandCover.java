@@ -21,7 +21,7 @@
 /**
  * 
  */
-package playground.jjoubert.projects.wb.tiff;
+package playground.jjoubert.projects.wb.tiff.branch;
 
 /**
  * A land cover classification based on GeoTerraImage's 72 Class GTI South 
