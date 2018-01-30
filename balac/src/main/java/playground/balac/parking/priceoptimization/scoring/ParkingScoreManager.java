@@ -29,6 +29,7 @@ import org.matsim.api.core.v01.population.Person;
 import org.matsim.contrib.multimodal.router.util.WalkTravelTime;
 import org.matsim.contrib.parking.parkingchoice.PC2.infrastructure.PC2Parking;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.AbstractParkingBetas;
+import org.matsim.contrib.parking.parkingchoice.PC2.scoring.ParkingScore;
 import org.matsim.contrib.parking.parkingchoice.PC2.scoring.RandomErrorTermManager;
 import org.matsim.contrib.parking.parkingchoice.lib.DebugLib;
 import org.matsim.contrib.parking.parkingchoice.lib.obj.DoubleValueHashMap;
@@ -38,7 +39,7 @@ import org.matsim.core.utils.geometry.CoordUtils;
 import playground.balac.parking.priceoptimization.infrastracture.OptimizableParking;
 
 
-public final class ParkingScoreManager {
+public final class ParkingScoreManager implements ParkingScore{
 	
 	private Double beelineDistanceFactor = 1.3 ;
 
@@ -57,7 +58,7 @@ public final class ParkingScoreManager {
 		this.scenario = scenario;
 		this.permitsPerPerson = permitsPerPerson;
 	}
-
+	@Override
 	public double calcWalkScore(Coord destCoord, PC2Parking parking, Id<Person> personId, double parkingDurationInSeconds) {
 		Map<Id<Person>, ? extends Person> persons = scenario.getPopulation().getPersons();
 		Person person = persons.get(personId);
@@ -83,14 +84,13 @@ public final class ParkingScoreManager {
 	
 		return (parkingWalkBeta * walkingTimeTotalInMinutes) * parkingScoreScalingFactor;
 	}
-
+	@Override
 	public double calcCostScore(double arrivalTime, double parkingDurationInSeconds, PC2Parking parking, Id<Person> personId) {
 		Person person = scenario.getPopulation().getPersons().get(personId);
 		double parkingCostBeta = getParkingBetas().getParkingCostBeta(person);
 		double parkingCost = parking.getCost(personId, arrivalTime, parkingDurationInSeconds);
 		return (parkingCostBeta * parkingCost) * parkingScoreScalingFactor;
 	}
-	
 	
 	public double calcScore(Coord destCoord, double arrivalTime, double parkingDurationInSeconds, PC2Parking parking, 
 			Id<Person> personId, int legIndex, boolean setCostToZero, String actType) {
@@ -144,45 +144,62 @@ public final class ParkingScoreManager {
 		}
 	return costScore + walkScore + randomError;
 	}
-
+	@Override
 	public double getScore(Id<Person> id) {
 		return scores.get(id);
 	}
-
+	@Override
 	public synchronized void addScore(Id<Person> id, double incValue) {
 		scores.incrementBy(id, incValue);
 	}
-
+	@Override
 	public synchronized void prepareForNewIteration() {
 		scores = new DoubleValueHashMap<>();
 	}
-
+	@Override
 	public double getParkingScoreScalingFactor() {
 		return parkingScoreScalingFactor;
 	}
-
+	@Override
 	public void setParkingScoreScalingFactor(double parkingScoreScalingFactor) {
 		this.parkingScoreScalingFactor = parkingScoreScalingFactor;
 	}
-
+	@Override
 	public double getRandomErrorTermScalingFactor() {
 		return randomErrorTermScalingFactor;
 	}
-
+	@Override
 	public void setRandomErrorTermScalingFactor(double randomErrorTermScalingFactor) {
 		this.randomErrorTermScalingFactor = randomErrorTermScalingFactor;
 	}
-
+	@Override
 	public AbstractParkingBetas getParkingBetas() {
 		return parkingBetas;
 	}
-
+	@Override
 	public void setParkingBetas(AbstractParkingBetas parkingBetas) {
 		this.parkingBetas = parkingBetas;
 	}
-
+	@Override
 	public void setRandomErrorTermManger(RandomErrorTermManager randomErrorTermManager) {
 		this.randomErrorTermManager = randomErrorTermManager;
+	}
+	@Override
+	public double calcScore(Coord destCoord, double arrivalTime, double parkingDurationInSeconds, PC2Parking parking,
+			Id<Person> personId, int legIndex, boolean setCostToZero) {
+		double walkScore = calcWalkScore(destCoord, parking, personId, parkingDurationInSeconds);
+		double costScore = calcCostScore(arrivalTime, parkingDurationInSeconds, parking, personId);
+		
+		if (setCostToZero){
+			costScore=0;
+		}
+		
+		double randomError=0;
+
+		if (randomErrorTermManager!=null){
+			randomError= randomErrorTermManager.getEpsilonAlternative(parking.getId(),personId,legIndex)*randomErrorTermScalingFactor*parkingScoreScalingFactor;
+		}
+		return costScore + walkScore + randomError;
 	}
 
 }

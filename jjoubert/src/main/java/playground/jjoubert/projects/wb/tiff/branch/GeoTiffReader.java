@@ -19,7 +19,7 @@
 /**
  * 
  */
-package playground.jjoubert.projects.wb.tiff;
+package playground.jjoubert.projects.wb.tiff.branch;
 
 import java.awt.Color;
 import java.io.BufferedWriter;
