@@ -1,23 +1,26 @@
 package playground.southafrica.freight.digicore.containers;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.matsim.api.core.v01.Coord;
+import org.matsim.api.core.v01.Customizable;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.core.scenario.CustomizableUtils;
 import org.matsim.facilities.ActivityFacility;
 import org.matsim.facilities.ActivityOption;
+import org.matsim.utils.objectattributes.attributable.Attributes;
 
 public class DigicoreFacility implements ActivityFacility {
 		
 	private Id<ActivityFacility> id;
 	private Id<Link> linkId;
 	private Coord coord;
-	private Map<String, Object> attributes = new HashMap<String, Object>();
+	private Attributes attributes = new Attributes();
 	private Map<String, ActivityOption> options = new TreeMap<String, ActivityOption>();
-
+	private Customizable customizableDelegate;
+	
 	public DigicoreFacility(Id<ActivityFacility> facilityId) {
 		this.id = facilityId;
 	}
@@ -41,7 +44,10 @@ public class DigicoreFacility implements ActivityFacility {
 
 	@Override
 	public Map<String, Object> getCustomAttributes() {
-		return this.attributes;
+		if (this.customizableDelegate == null) {
+			this.customizableDelegate = CustomizableUtils.createCustomizable();
+		}
+		return this.customizableDelegate.getCustomAttributes();
 	}
 
 	@Override
@@ -52,6 +58,11 @@ public class DigicoreFacility implements ActivityFacility {
 	@Override
 	public void addActivityOption(ActivityOption option) {
 		this.options.put(option.getType(), option);
+	}
+
+	@Override
+	public Attributes getAttributes() {
+		return this.attributes;
 	}
 
 }
