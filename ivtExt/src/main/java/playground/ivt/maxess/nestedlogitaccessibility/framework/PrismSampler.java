@@ -30,6 +30,7 @@ import org.matsim.core.utils.geometry.CoordUtils;
 import org.matsim.facilities.ActivityFacilities;
 import org.matsim.facilities.ActivityFacility;
 import org.matsim.facilities.ActivityOption;
+import org.matsim.utils.objectattributes.attributable.Attributes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,6 +78,12 @@ public class PrismSampler {
 		return facilityId != null ?
 				allFacilities.getFacilities().get( act.getFacilityId() ) :
 				new ActivityFacility() {
+
+					@Override
+					public Attributes getAttributes() {
+						return null; //this won't be usable, it's only here to prevent the compilation error
+					}
+
 					@Override
 					public Map<String, ActivityOption> getActivityOptions() {
 						throw new UnsupportedOperationException( "This is a dummy facility, only link and coord are available." );

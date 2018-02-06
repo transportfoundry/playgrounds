@@ -35,6 +35,7 @@ import org.matsim.facilities.ActivityOption;
 import org.matsim.households.Household;
 import org.matsim.households.Households;
 import org.matsim.utils.objectattributes.ObjectAttributes;
+import org.matsim.utils.objectattributes.attributable.Attributes;
 import playground.ivt.maxess.nestedlogitaccessibility.framework.Alternative;
 import playground.ivt.maxess.nestedlogitaccessibility.framework.ChoiceSetIdentifier;
 import playground.ivt.maxess.nestedlogitaccessibility.framework.Nest;
@@ -268,6 +269,12 @@ public class CapeTownNestedLogitModelChoiceSetIdentifier implements ChoiceSetIde
 		return facilityId != null ?
 				allFacilities.getFacilities().get( act.getFacilityId() ) :
 				new ActivityFacility() {
+
+					@Override
+					public Attributes getAttributes() {
+						return null; //this won't be usable, it's only here to prevent the compilation error
+					}
+
 					@Override
 					public Map<String, ActivityOption> getActivityOptions() {
 						throw new UnsupportedOperationException( "This is a dummy facility, only link and coord are available." );

@@ -30,6 +30,7 @@ import org.matsim.core.router.TripStructureUtils;
 import org.matsim.facilities.ActivityFacilities;
 import org.matsim.facilities.ActivityFacility;
 import org.matsim.facilities.ActivityOption;
+import org.matsim.utils.objectattributes.attributable.Attributes;
 import playground.ivt.maxess.prepareforbiogeme.framework.ChoicesIdentifier;
 
 import java.util.ArrayList;
@@ -98,6 +99,12 @@ public class TripChoicesIdentifier implements ChoicesIdentifier<TripChoiceSituat
 
 		return ex != null ? ex :
 				new ActivityFacility() {
+
+					@Override
+					public Attributes getAttributes() {
+						return null; //this won't be usable, it's only here to prevent the compilation error
+					}
+
 					@Override
 					public Map<String, ActivityOption> getActivityOptions() {
 						throw new UnsupportedOperationException( "This is a dummy facility, only link and coord are available." );
