@@ -128,8 +128,8 @@ public class DigicoreClusterRunner {
 		LOG.info(" Clustering the points...");
 		
 		/* These values should be set following Meintjes and Joubert, City Logistics paper? */
-		double[] radii = {10}; ////, 10, 15, 20, 25, 30, 35, 40};
-		int[] pmins = {10}; //, 10, 15, 20, 25};
+		double[] radii = {20}; ////, 10, 15, 20, 25, 30, 35, 40};
+		int[] pmins = {20}; //, 10, 15, 20, 25};
 
 		for(double thisRadius : radii){
 			for(int thisPmin : pmins){
