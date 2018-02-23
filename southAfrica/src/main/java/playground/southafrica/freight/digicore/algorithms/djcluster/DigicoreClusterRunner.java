@@ -44,8 +44,10 @@ import org.matsim.facilities.ActivityFacilitiesImpl;
 import org.matsim.facilities.ActivityFacility;
 import org.matsim.facilities.FacilitiesUtils;
 import org.matsim.facilities.FacilitiesWriter;
+import org.matsim.utils.objectattributes.AttributeConverter;
 import org.matsim.utils.objectattributes.ObjectAttributes;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
+import org.matsim.utils.objectattributes.attributable.Attributes;
 
 import playground.southafrica.freight.digicore.algorithms.concaveHull.ConcaveHull;
 import playground.southafrica.freight.digicore.algorithms.djcluster.containers.ClusterActivity;
@@ -119,6 +121,7 @@ public class DigicoreClusterRunner {
 		try {
 			dcr.buildPointLists(input, shapefile, idField);
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new RuntimeException("Could not build minor points list.");
 		}
 		long readTime = System.currentTimeMillis() - jobStart;
@@ -184,12 +187,44 @@ public class DigicoreClusterRunner {
 	}
 
 
+	/**
+	 * Write the {@link ActivityFacilities} to file along with the 
+	 * {@link ConcaveHull} and number of points as {@link Attributes}.
+	 * 
+	 * @param theFacilityFile
+	 */
+	public void writeOutput(String theFacilityFile) {
+		/* Write (for the current configuration) facilities, and the attributes, to file. */
+		LOG.info("-------------------------------------------------------------");
+		LOG.info(" Writing the facilities to file: " + theFacilityFile);
+		FacilitiesWriter fw = new FacilitiesWriter(facilities);
+		Map<Class<?>, AttributeConverter<?>> converters = new HashMap<>();
+		converters.put(Point.class, new HullConverter());
+		converters.put(LineString.class, new HullConverter());
+		converters.put(Polygon.class, new HullConverter());
+		fw.putAttributeConverters(converters );
+		fw.write(theFacilityFile);				
+	}
 
+	/**
+	 * This method is now deprecated as a {@link Facility} now has its own 
+	 * {@link Attributes} and need not have the separate {@link ObjectAttributes}
+	 * file.
+	 *  
+	 * @param theFacilityFile
+	 * @param theFacilityAttributeFile
+	 */
+	@Deprecated
 	public void writeOutput(String theFacilityFile, String theFacilityAttributeFile) {
 		/* Write (for the current configuration) facilities, and the attributes, to file. */
 		LOG.info("-------------------------------------------------------------");
 		LOG.info(" Writing the facilities to file: " + theFacilityFile);
 		FacilitiesWriter fw = new FacilitiesWriter(facilities);
+		Map<Class<?>, AttributeConverter<?>> converters = new HashMap<>();
+		converters.put(Point.class, new HullConverter());
+		converters.put(LineString.class, new HullConverter());
+		converters.put(Polygon.class, new HullConverter());
+		fw.putAttributeConverters(converters );
 		fw.write(theFacilityFile);				
 		LOG.info(" Writing the facility attributes to file: " + theFacilityAttributeFile);
 		ObjectAttributesXmlWriter ow = new ObjectAttributesXmlWriter(facilityAttributes);
@@ -298,6 +333,10 @@ public class DigicoreClusterRunner {
 							
 							ActivityFacility af = facilities.getFactory().createActivityFacility(facilityId, dc.getCenterOfGravity());
 							facilities.addActivityFacility(af);
+							
+							af.getAttributes().putAttribute("digicoreActivityCount", String.valueOf(dc.getPoints().size()));
+							af.getAttributes().putAttribute("concaveHull", hull);
+							
 							facilityAttributes.putAttribute(facilityId.toString(), "DigicoreActivityCount", String.valueOf(dc.getPoints().size()));
 							facilityAttributes.putAttribute(facilityId.toString(), "concaveHull", hull);
 						} else{
