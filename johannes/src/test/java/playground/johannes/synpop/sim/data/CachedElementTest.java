@@ -19,7 +19,7 @@
 
 package playground.johannes.synpop.sim.data;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import playground.johannes.synpop.data.PlainSegment;
 import playground.johannes.synpop.data.Segment;

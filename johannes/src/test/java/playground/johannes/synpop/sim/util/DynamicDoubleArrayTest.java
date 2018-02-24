@@ -19,7 +19,7 @@
 
 package playground.johannes.synpop.sim.util;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 
 /**

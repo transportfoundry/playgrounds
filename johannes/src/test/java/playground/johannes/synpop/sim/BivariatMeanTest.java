@@ -19,7 +19,7 @@
 
 package playground.johannes.synpop.sim;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import org.matsim.contrib.common.stats.LinearDiscretizer;
 import playground.johannes.synpop.data.Person;
