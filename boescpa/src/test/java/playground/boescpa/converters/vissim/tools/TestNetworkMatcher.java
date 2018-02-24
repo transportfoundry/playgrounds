@@ -21,10 +21,7 @@
 
 package playground.boescpa.converters.vissim.tools;
 
-import java.util.HashMap;
-
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,8 +33,9 @@ import org.matsim.api.core.v01.network.NetworkFactory;
 import org.matsim.api.core.v01.network.Node;
 import org.matsim.core.network.NetworkUtils;
 import org.matsim.testcases.MatsimTestUtils;
-
 import playground.boescpa.converters.vissim.ConvEvents;
+
+import java.util.HashMap;
 
 /**
  * Tests the methods of the class DefaultNetworkMatcher.

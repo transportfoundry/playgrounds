@@ -21,7 +21,7 @@
 
 package playground.pieter.singapore.utils;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;

@@ -21,7 +21,7 @@
 
 package playground.boescpa.converters.vissim.tools;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -68,8 +68,8 @@ public class TestBaseGridCreator {
 		Assert.assertTrue(network.getNodes().size() == 12);
 		Node minNode = network.getNodes().get(Id.create(1, Node.class));
 		Node maxNode = network.getNodes().get(Id.create(network.getNodes().size(), Node.class));
-		Assert.assertEquals(minNode.getCoord().getX(),0.0);
-		Assert.assertEquals(minNode.getCoord().getY(),0.0);
+		Assert.assertEquals(minNode.getCoord().getX(),0.0, 1e-7);
+		Assert.assertEquals(minNode.getCoord().getY(),0.0, 1e-7);
 		Assert.assertEquals(maxNode.getCoord().getX(),201.0, BaseGridCreator.getGridcellsize() - 1);
 		Assert.assertEquals(maxNode.getCoord().getY(),200.0, BaseGridCreator.getGridcellsize() - 1);
 	}
@@ -80,8 +80,8 @@ public class TestBaseGridCreator {
 		Assert.assertTrue(network.getNodes().size() == 17094);
 		Node minNode = network.getNodes().get(Id.create(1, Node.class));
 		Node maxNode = network.getNodes().get(Id.create(network.getNodes().size(), Node.class));
-		Assert.assertEquals(minNode.getCoord().getX(),675666.0);
-		Assert.assertEquals(minNode.getCoord().getY(),242315.0);
+		Assert.assertEquals(minNode.getCoord().getX(),675666.0, 1e-7);
+		Assert.assertEquals(minNode.getCoord().getY(),242315.0, 1e-7);
 		Assert.assertEquals(maxNode.getCoord().getX(),690908.0, BaseGridCreator.getGridcellsize() - 1);
 		Assert.assertEquals(maxNode.getCoord().getY(),253296.0, BaseGridCreator.getGridcellsize() - 1);
 	}

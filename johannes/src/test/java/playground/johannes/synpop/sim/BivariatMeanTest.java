@@ -19,7 +19,7 @@
 
 package playground.johannes.synpop.sim;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import junit.framework.TestCase;
 import org.matsim.contrib.common.stats.LinearDiscretizer;
 import playground.johannes.synpop.data.Person;
@@ -72,23 +72,23 @@ public class BivariatMeanTest extends TestCase {
 
         double binCount = 4.0;
 
-        Assert.assertEquals(5.0/binCount, mm.evaluate(null));
+        Assert.assertEquals(5.0/binCount, mm.evaluate(null), 1e-7);
 
         cachedPerson1.setData(dataKey2, 1.0);
         mm.onChange(dataKey2, 0.0, 1.0, cachedPerson1);
-        Assert.assertEquals(4.0/binCount, mm.evaluate(null));
+        Assert.assertEquals(4.0/binCount, mm.evaluate(null), 1e-7);
 
         cachedPerson1.setData(dataKey1, 0.0);
         mm.onChange(dataKey1, 1.0, 0.0, cachedPerson1);
-        Assert.assertEquals(4.0/binCount, mm.evaluate(null));
+        Assert.assertEquals(4.0/binCount, mm.evaluate(null), 1e-7);
 
         cachedPerson1.setData(dataKey2, 0.0);
         mm.onChange(dataKey2, 1.0, 0.0, cachedPerson1);
-        Assert.assertEquals(4.0/binCount, mm.evaluate(null));
+        Assert.assertEquals(4.0/binCount, mm.evaluate(null), 1e-7);
 
         cachedPerson1.setData(dataKey1, 3.0);
         mm.onChange(dataKey1, 0.0, 3.0, cachedPerson1);
-        Assert.assertEquals(1.5/binCount, mm.evaluate(null));
+        Assert.assertEquals(1.5/binCount, mm.evaluate(null), 1e-7);
     }
 
 

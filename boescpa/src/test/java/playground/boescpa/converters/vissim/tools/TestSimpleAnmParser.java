@@ -21,7 +21,7 @@
 
 package playground.boescpa.converters.vissim.tools;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Rule;
