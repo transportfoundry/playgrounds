@@ -34,29 +34,29 @@ public class DynamicDoubleArrayTest extends TestCase {
         array.set(11, 111);
         array.set(4, 104);
 
-        Assert.assertEquals(array.get(0), 100.0);
-        Assert.assertEquals(array.get(4), 104.0);
-        Assert.assertEquals(array.get(11), 111.0);
-        Assert.assertEquals(array.get(1), Double.NaN);
+        Assert.assertEquals(array.get(0), 100.0, 1e-7);
+        Assert.assertEquals(array.get(4), 104.0, 1e-7);
+        Assert.assertEquals(array.get(11), 111.0, 1e-7);
+        Assert.assertEquals(array.get(1), Double.NaN, 1e-7);
 
         array.set(23, 123);
 
-        Assert.assertEquals(array.get(23), 123.0);
-        Assert.assertEquals(array.get(4887), array.naValue);
+        Assert.assertEquals(array.get(23), 123.0, 1e-7);
+        Assert.assertEquals(array.get(4887), array.naValue, 1e-7);
     }
 
     public void test2() {
         DynamicDoubleArray array = new DynamicDoubleArray(100, 0);
 
-        Assert.assertEquals(array.get(234), 0.0);
-        Assert.assertEquals(array.get(0), 0.0);
+        Assert.assertEquals(array.get(234), 0.0, 1e-7);
+        Assert.assertEquals(array.get(0), 0.0, 1e-7);
 
         array.set(99, 2);
-        Assert.assertEquals(array.get(99), 2.0);
+        Assert.assertEquals(array.get(99), 2.0, 1e-7);
 
         array.set(102, 4);
-        Assert.assertEquals(array.get(102), 4.0);
+        Assert.assertEquals(array.get(102), 4.0, 1e-7);
 
-        Assert.assertEquals(array.get(101), 0.0);
+        Assert.assertEquals(array.get(101), 0.0, 1e-7);
     }
 }
