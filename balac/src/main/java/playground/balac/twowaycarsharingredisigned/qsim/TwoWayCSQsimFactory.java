@@ -120,7 +120,7 @@ public class TwoWayCSQsimFactory implements MobsimFactory{
 			
 		}
 		if (sc.getConfig().network().isTimeVariantNetwork()) {
-			qSim.addMobsimEngine(new NetworkChangeEventsEngine());		
+			qSim.addMobsimEngine(NetworkChangeEventsEngine.createNetworkChangeEventsEngine());
 		}
 		PopulationAgentSource agentSource = new PopulationAgentSource(sc.getPopulation(), agentFactory, qSim);
 		ParkTWVehicles parkSource = new ParkTWVehicles(sc.getPopulation(), agentFactory, qSim, twvehiclesLocationqt);

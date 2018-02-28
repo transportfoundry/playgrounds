@@ -1,6 +1,5 @@
 package playground.balac.parking.freefloating.qsim;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.matsim.api.core.v01.Scenario;
@@ -24,7 +23,6 @@ import org.matsim.core.router.util.TravelTime;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.name.Named;
 
 import playground.balac.parking.freefloating.ParkingModuleWithFFCarSharingZH;
 
@@ -75,7 +73,7 @@ public class FreeFloatingQsimFactory implements Provider<Netsim>{
 		
 		
 		if (sc.getConfig().network().isTimeVariantNetwork()) {
-			qSim.addMobsimEngine(new NetworkChangeEventsEngine());		
+			qSim.addMobsimEngine(NetworkChangeEventsEngine.createNetworkChangeEventsEngine());
 		}
 		PopulationAgentSource agentSource = new PopulationAgentSource(sc.getPopulation(), agentFactory, qSim);
 		
