@@ -142,6 +142,7 @@
 		<module>southAfrica</module>
 		<module>stockholm</module>
 		<module>wrashid</module>
+		<module>tf</module>
 	</modules>
 
 	<dependencies>
